@@ -236,13 +236,11 @@ table.canvas td:nth-child(2){ width:220px; font-weight:600; }
 /* ---------- agent canvas board ---------- */
 .canvas-board{
   display:grid; gap:14px; margin:18px 0 30px;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(5,1fr);
   grid-template-areas:
-    "goal goal goal"
-    "user input tool"
-    "skill skill output"
-    "exception exception log"
-    "approval approval approval";
+    "c1 c2 c3 c4 c5"
+    "c1 c6 c3 c7 c5"
+    "c8 c8 c9 c9 c9";
 }
 .canvas-board .note{
   background:#fff; border:1px solid var(--border); border-top:4px solid var(--cyan);
@@ -250,15 +248,15 @@ table.canvas td:nth-child(2){ width:220px; font-weight:600; }
 }
 .canvas-board .note .lbl{ font-size:11px; text-transform:uppercase; letter-spacing:1px; font-weight:800; color:var(--muted); margin-bottom:8px; }
 .canvas-board .note .val{ font-size:14.5px; font-weight:600; line-height:1.65; white-space:pre-wrap; color:var(--text); }
-.canvas-board .a-goal{ grid-area:goal; border-top-color:var(--violet); background:linear-gradient(135deg,#f6f3ff,#fff); }
-.canvas-board .a-user{ grid-area:user; }
-.canvas-board .a-input{ grid-area:input; }
-.canvas-board .a-tool{ grid-area:tool; }
-.canvas-board .a-skill{ grid-area:skill; }
-.canvas-board .a-output{ grid-area:output; border-top-color:var(--good); }
-.canvas-board .a-exception{ grid-area:exception; border-top-color:var(--warn); background:linear-gradient(135deg,#fff9ec,#fff); }
-.canvas-board .a-log{ grid-area:log; }
-.canvas-board .a-approval{ grid-area:approval; border-top-color:var(--bad); background:linear-gradient(135deg,#fff6f5,#fff); }
+.canvas-board .a-c1{ grid-area:c1; border-top-color:var(--violet); background:linear-gradient(135deg,#f6f3ff,#fff); }
+.canvas-board .a-c2{ grid-area:c2; }
+.canvas-board .a-c3{ grid-area:c3; }
+.canvas-board .a-c4{ grid-area:c4; }
+.canvas-board .a-c5{ grid-area:c5; }
+.canvas-board .a-c6{ grid-area:c6; border-top-color:var(--warn); background:linear-gradient(135deg,#fff9ec,#fff); }
+.canvas-board .a-c7{ grid-area:c7; }
+.canvas-board .a-c8{ grid-area:c8; border-top-color:var(--good); }
+.canvas-board .a-c9{ grid-area:c9; border-top-color:var(--good); }
 .canvas-board.empty .val{ color:#c3c7de; }
 
 .canvas-form{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
@@ -275,7 +273,7 @@ table.canvas td:nth-child(2){ width:220px; font-weight:600; }
 }
 .btn-generate:hover{ filter:brightness(1.08); }
 @media (max-width:920px){
-  .canvas-board{ grid-template-columns:1fr; grid-template-areas:"goal" "user" "input" "tool" "skill" "output" "exception" "log" "approval"; }
+  .canvas-board{ grid-template-columns:1fr; grid-template-areas:"c1" "c2" "c3" "c4" "c5" "c6" "c7" "c8" "c9"; }
   .canvas-form{ grid-template-columns:1fr; }
 }
 
@@ -373,7 +371,7 @@ footer.pagefoot{ max-width:760px; padding:50px 0 10px; color:var(--muted); font-
     <a href="#guardrail"><span class="n">7</span> กติกาความปลอดภัย</a>
     <a href="#safe-start"><span class="n">8</span> เริ่มทดลองอย่างปลอดภัย</a>
     <a href="#enterprise"><span class="n">9</span> ตัวอย่าง Enterprise Agent</a>
-    <a href="#canvas"><span class="n">10</span> Agent Canvas 7 ช่อง</a>
+    <a href="#canvas"><span class="n">10</span> Pilot Workflow Canvas (MIT 9 ช่อง)</a>
     <a href="#glossary"><span class="n">11</span> สรุปคำศัพท์</a>
     <a href="#takeaways"><span class="n">12</span> Key Takeaways</a>
   </nav>
@@ -782,62 +780,62 @@ footer.pagefoot{ max-width:760px; padding:50px 0 10px; color:var(--muted); font-
 
       <!-- 10 -->
       <section id="canvas">
-        <h2><span class="sec-num">10</span>Agent Canvas ฉบับเต็ม 9 ช่อง</h2>
-        <p>ในคลาสสดเราย่อเหลือ 4 ช่องภาษาคนเพื่อลดความรู้สึก "ตอบไม่ได้" — นี่คือฉบับเต็ม 9 ช่อง สำหรับคนที่พร้อมออกแบบละเอียดขึ้น อิงกรอบ <b>MIT — Applied Agentic AI for Organizational Transformation (Pilot Workflow Canvas)</b> โดยเพิ่มช่อง Exception และ Log/หลักฐาน ซึ่งจำเป็นมากสำหรับสถาบันการเงิน</p>
+        <h2><span class="sec-num">10</span>Pilot Workflow Canvas — 9 ช่อง (MIT)</h2>
+        <p>นี่คือ Canvas ฉบับเต็ม 9 ช่อง อิงกรอบ <b>MIT — Applied Agentic AI for Organizational Transformation</b> (AI Maturity Cycle · Data Governance · HITL Safe Deployment — M3/M5) เป็นชุดคำถามเดียวกับที่ใช้ใน <b>Blueprint Lab</b> ของเรา ใช้เป็นใบงานกระดาษสำหรับร่างก่อนกรอกในระบบก็ได้</p>
 
         <table class="canvas">
           <tr><th>#</th><th>ช่อง</th><th>คำถาม</th></tr>
-          <tr><td>1</td><td>งาน (Goal)</td><td>งานที่อยากให้ Agent ช่วยคืออะไร?</td></tr>
-          <tr><td>2</td><td>ผู้ใช้</td><td>ใครคือผู้ใช้ Agent?</td></tr>
-          <tr><td>3</td><td>Input</td><td>Agent ต้องรับ Input อะไร?</td></tr>
-          <tr><td>4</td><td>ระบบ (Tool)</td><td>ต้องต่อข้อมูลหรือระบบอะไร?</td></tr>
-          <tr><td>5</td><td>Skill</td><td>Agent ต้องมี Skill อะไร?</td></tr>
-          <tr><td>6</td><td>Output</td><td>Output ที่ต้องการคืออะไร?</td></tr>
-          <tr><td>7</td><td>Approval</td><td>จุดไหนต้องให้คนอนุมัติ?</td></tr>
-          <tr><td>8</td><td>Exception</td><td>ถ้าข้อมูลไม่ครบ ระบบล่ม หรือเจอเคสแปลก Agent ทำอะไร แจ้งใคร?</td></tr>
-          <tr><td>9</td><td>Log / หลักฐาน</td><td>ต้องบันทึกอะไรไว้ให้ย้อนดูได้? (Log every action)</td></tr>
+          <tr><td>1</td><td>Trigger &amp; Current Pain</td><td>งานนี้เริ่มเมื่อไร และปัญหาปัจจุบันคืออะไร?</td></tr>
+          <tr><td>2</td><td>Happy Path</td><td>ปกติทำงานนี้ทีละขั้นอย่างไร? (ไล่เป็นข้อ)</td></tr>
+          <tr><td>3</td><td>Where the AI Agent Fits</td><td>ขั้นไหนให้ Agent ทำ / ทำแล้วคนตรวจ / คนทำเอง?</td></tr>
+          <tr><td>4</td><td>Data &amp; Systems Accessed</td><td>ต้องเข้าถึงข้อมูลหรือระบบอะไร? (สิทธิ์ / ข้อมูลลับ)</td></tr>
+          <tr><td>5</td><td>Human-in-the-Loop Gates</td><td>จุดไหนที่คนต้องตรวจหรืออนุมัติก่อน?</td></tr>
+          <tr><td>6</td><td>Exception Path</td><td>ถ้าข้อมูลไม่ครบ/เจอเคสแปลก Agent ทำอะไร แจ้งใคร?</td></tr>
+          <tr><td>7</td><td>Evidence &amp; Audit Log</td><td>ต้องบันทึกอะไรไว้ให้ย้อนดูได้? (Log every action)</td></tr>
+          <tr><td>8</td><td>Effort / Value / Risk</td><td>คุ้มค่าแค่ไหน สร้างยากแค่ไหน เสี่ยงแค่ไหน?</td></tr>
+          <tr><td>9</td><td>Target Maturity Phase</td><td>เริ่มระดับไหน: คลาน / เดิน / วิ่ง (Crawl / Walk / Run)?</td></tr>
         </table>
 
         <h3>ตัวอย่าง Canvas ที่กรอกครบ — Daily Sales Insight Agent</h3>
         <div class="canvas-board">
-          <div class="note a-goal"><div class="lbl">งาน (Goal)</div><div class="val">สรุปยอดขายรายวัน + หาสาขา performance ผิดปกติ</div></div>
-          <div class="note a-user"><div class="lbl">ผู้ใช้</div><div class="val">ผู้จัดการทีมขาย / ผู้บริหาร / ทีม Analytics</div></div>
-          <div class="note a-input"><div class="lbl">Input</div><div class="val">คำถามผู้บริหาร เช่น "เมื่อวานสาขาไหนยอดตกผิดปกติ เพราะอะไร"</div></div>
-          <div class="note a-tool"><div class="lbl">ระบบ (Tool)</div><div class="val">Sales database, Branch master, Target, Historical sales</div></div>
-          <div class="note a-skill"><div class="lbl">Skill</div><div class="val">Trend analysis, Anomaly detection, อธิบาย root cause, เขียน executive summary</div></div>
-          <div class="note a-output"><div class="lbl">Output</div><div class="val">รายงาน 1 หน้า: สาขาผิดปกติ + สาเหตุที่เป็นไปได้ + recommendation</div></div>
-          <div class="note a-exception"><div class="lbl">Exception</div><div class="val">ถ้าข้อมูลไม่ครบ → หยุด + แจ้ง Analyst ทาง Teams และห้ามเดาตัวเลข</div></div>
-          <div class="note a-log"><div class="lbl">Log / หลักฐาน</div><div class="val">บันทึกแหล่งข้อมูล เวลา สาขาที่ผิดปกติ และใครเป็นคนอนุมัติ</div></div>
-          <div class="note a-approval"><div class="lbl">Approval</div><div class="val">Analyst ตรวจก่อนส่งผู้บริหาร</div></div>
+          <div class="note a-c1"><div class="lbl">1 · Trigger &amp; Current Pain</div><div class="val">ทุกเช้า 8:00 ผู้บริหารถามว่าสาขาไหนยอดตกผิดปกติ · วันนี้ต้องรวบรวมหลายระบบด้วยมือ ใช้เวลานาน เห็นช้า</div></div>
+          <div class="note a-c2"><div class="lbl">2 · Happy Path</div><div class="val">1) ดึงยอดขายรายสาขา 2) เทียบกับเป้า/ค่าเฉลี่ย 3) หา anomaly 4) หา root cause 5) เขียนสรุป 1 หน้า</div></div>
+          <div class="note a-c3"><div class="lbl">3 · Where the AI Agent Fits</div><div class="val">ขั้น 1–4 🤖 Agent ทำ · ขั้น 5 🤖+👤 Agent ร่าง คนตรวจ · Autonomy: Advisory</div></div>
+          <div class="note a-c4"><div class="lbl">4 · Data &amp; Systems Accessed</div><div class="val">Sales DB, Branch master, Target, Historical sales (read-only) · ไม่มีข้อมูลลูกค้า</div></div>
+          <div class="note a-c5"><div class="lbl">5 · Human-in-the-Loop Gates</div><div class="val">Analyst ตรวจตัวเลขและสรุป ก่อนส่งผู้บริหารทุกครั้ง</div></div>
+          <div class="note a-c6"><div class="lbl">6 · Exception Path</div><div class="val">ข้อมูลไม่ครบ → หยุด + แจ้ง Analyst ทาง Teams และห้ามเดาตัวเลข</div></div>
+          <div class="note a-c7"><div class="lbl">7 · Evidence &amp; Audit Log</div><div class="val">บันทึกแหล่งข้อมูล เวลา สาขาที่ผิดปกติ ผลสรุป และใครเป็นคนอนุมัติ</div></div>
+          <div class="note a-c8"><div class="lbl">8 · Effort / Value / Risk</div><div class="val">Value: สูง · Effort: กลาง · Risk: กลาง (ลดด้วย advisory + คนตรวจ)</div></div>
+          <div class="note a-c9"><div class="lbl">9 · Target Maturity Phase</div><div class="val">เริ่ม Crawl (คนตรวจทุกชิ้น) → ขยับ Walk เมื่อความแม่นยำ &gt; 90%</div></div>
         </div>
 
         <h3>ลองกรอกของคุณเอง แล้วสร้างเป็น Canvas</h3>
-        <p style="color:var(--muted);font-size:14px;">กรอก 7 ช่องด้านล่าง แล้วกดปุ่ม "สร้าง Canvas" — ระบบจะจัดหน้าให้เป็นบอร์ด Canvas ทันที (ไม่ถูกบันทึกไว้ในเครื่อง ถ้าจะเก็บให้ปริ้นหรือคัดลอกไปที่อื่น)</p>
+        <p style="color:var(--muted);font-size:14px;">กรอก 9 ช่องด้านล่าง แล้วกดปุ่ม "สร้าง Canvas" — ระบบจะจัดหน้าให้เป็นบอร์ด Canvas ทันที (ไม่ถูกบันทึกไว้ในเครื่อง ถ้าจะเก็บให้ปริ้นหรือคัดลอกไปที่อื่น)</p>
         <div class="card">
           <div class="canvas-form">
-            <label>งาน (Goal)<textarea id="cf-goal" placeholder="งานที่อยากให้ Agent ช่วยคืออะไร?"></textarea></label>
-            <label>ผู้ใช้<textarea id="cf-user" placeholder="ใครคือผู้ใช้ Agent?"></textarea></label>
-            <label>Input<textarea id="cf-input" placeholder="Agent ต้องรับ Input อะไร?"></textarea></label>
-            <label>ระบบ (Tool)<textarea id="cf-tool" placeholder="ต้องต่อข้อมูลหรือระบบอะไร?"></textarea></label>
-            <label>Skill<textarea id="cf-skill" placeholder="Agent ต้องมี Skill อะไร?"></textarea></label>
-            <label>Output<textarea id="cf-output" placeholder="Output ที่ต้องการคืออะไร?"></textarea></label>
-            <label>Approval<textarea id="cf-approval" placeholder="จุดไหนต้องให้คนอนุมัติ?"></textarea></label>
-            <label>Exception<textarea id="cf-exception" placeholder="ถ้าข้อมูลไม่ครบ/เจอเคสแปลก Agent ทำอะไร แจ้งใคร?"></textarea></label>
-            <label>Log / หลักฐาน<textarea id="cf-log" placeholder="ต้องบันทึกอะไรให้ย้อนดูได้?"></textarea></label>
+            <label>1 · Trigger &amp; Current Pain<textarea id="cf-c1" placeholder="งานนี้เริ่มเมื่อไร และปัญหาปัจจุบันคืออะไร?"></textarea></label>
+            <label>2 · Happy Path<textarea id="cf-c2" placeholder="ปกติทำงานนี้ทีละขั้นอย่างไร? (ไล่เป็นข้อ)"></textarea></label>
+            <label>3 · Where the AI Agent Fits<textarea id="cf-c3" placeholder="ขั้นไหนให้ Agent ทำ / ทำแล้วคนตรวจ / คนทำเอง?"></textarea></label>
+            <label>4 · Data &amp; Systems Accessed<textarea id="cf-c4" placeholder="ต้องเข้าถึงข้อมูลหรือระบบอะไร? (สิทธิ์/ข้อมูลลับ)"></textarea></label>
+            <label>5 · Human-in-the-Loop Gates<textarea id="cf-c5" placeholder="จุดไหนที่คนต้องตรวจหรืออนุมัติก่อน?"></textarea></label>
+            <label>6 · Exception Path<textarea id="cf-c6" placeholder="ถ้าข้อมูลไม่ครบ/เจอเคสแปลก Agent ทำอะไร แจ้งใคร?"></textarea></label>
+            <label>7 · Evidence &amp; Audit Log<textarea id="cf-c7" placeholder="ต้องบันทึกอะไรให้ย้อนดูได้? (Log every action)"></textarea></label>
+            <label>8 · Effort / Value / Risk<textarea id="cf-c8" placeholder="คุ้มค่าแค่ไหน สร้างยากแค่ไหน เสี่ยงแค่ไหน?"></textarea></label>
+            <label>9 · Target Maturity Phase<textarea id="cf-c9" placeholder="เริ่มระดับไหน: คลาน / เดิน / วิ่ง?"></textarea></label>
           </div>
           <button class="btn-generate" id="genCanvas">สร้าง Canvas ของฉัน ↓</button>
         </div>
 
         <div class="canvas-board empty" id="myCanvasBoard">
-          <div class="note a-goal"><div class="lbl">งาน (Goal)</div><div class="val">—</div></div>
-          <div class="note a-user"><div class="lbl">ผู้ใช้</div><div class="val">—</div></div>
-          <div class="note a-input"><div class="lbl">Input</div><div class="val">—</div></div>
-          <div class="note a-tool"><div class="lbl">ระบบ (Tool)</div><div class="val">—</div></div>
-          <div class="note a-skill"><div class="lbl">Skill</div><div class="val">—</div></div>
-          <div class="note a-output"><div class="lbl">Output</div><div class="val">—</div></div>
-          <div class="note a-exception"><div class="lbl">Exception</div><div class="val">—</div></div>
-          <div class="note a-log"><div class="lbl">Log / หลักฐาน</div><div class="val">—</div></div>
-          <div class="note a-approval"><div class="lbl">Approval</div><div class="val">—</div></div>
+          <div class="note a-c1"><div class="lbl">1 · Trigger &amp; Current Pain</div><div class="val">—</div></div>
+          <div class="note a-c2"><div class="lbl">2 · Happy Path</div><div class="val">—</div></div>
+          <div class="note a-c3"><div class="lbl">3 · Where the AI Agent Fits</div><div class="val">—</div></div>
+          <div class="note a-c4"><div class="lbl">4 · Data &amp; Systems Accessed</div><div class="val">—</div></div>
+          <div class="note a-c5"><div class="lbl">5 · Human-in-the-Loop Gates</div><div class="val">—</div></div>
+          <div class="note a-c6"><div class="lbl">6 · Exception Path</div><div class="val">—</div></div>
+          <div class="note a-c7"><div class="lbl">7 · Evidence &amp; Audit Log</div><div class="val">—</div></div>
+          <div class="note a-c8"><div class="lbl">8 · Effort / Value / Risk</div><div class="val">—</div></div>
+          <div class="note a-c9"><div class="lbl">9 · Target Maturity Phase</div><div class="val">—</div></div>
         </div>
       </section>
 
@@ -926,7 +924,7 @@ const genBtn = document.getElementById('genCanvas');
 if(genBtn){
   genBtn.addEventListener('click', ()=>{
     const board = document.getElementById('myCanvasBoard');
-    const fields = ['goal','user','input','tool','skill','output','exception','log','approval'];
+    const fields = ['c1','c2','c3','c4','c5','c6','c7','c8','c9'];
     let hasValue = false;
     fields.forEach(f=>{
       const input = document.getElementById('cf-'+f);
