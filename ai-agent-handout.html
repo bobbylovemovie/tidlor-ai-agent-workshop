@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIDLOR AI Agent Training — Handout ฉบับเต็ม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b0e24;
+  --navy2:#141a3d;
+  --cyan:#0891b2;
+  --cyan-light:#06b6d4;
+  --violet:#7c3aed;
+  --bg:#f8f9fc;
+  --card:#ffffff;
+  --border:#e6e8f2;
+  --text:#1b1f36;
+  --muted:#5b6178;
+  --good:#0f9d58;
+  --good-bg:#eafaf1;
+  --bad:#d93025;
+  --bad-bg:#fdeceb;
+  --warn:#b8860b;
+  --warn-bg:#fff6e0;
+  --radius:16px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:'Noto Sans Thai','Sarabun',sans-serif;
+  line-height:1.75; font-size:16.5px;
+}
+::selection{ background:rgba(8,145,178,.2); }
+
+/* ---------- progress bar ---------- */
+#progress{ position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--cyan),var(--violet)); width:0%; z-index:100; transition:width .1s linear; }
+
+/* ---------- topbar ---------- */
+.topbar{
+  position:sticky; top:0; z-index:40; background:rgba(11,14,36,.94); backdrop-filter:blur(8px);
+  color:#fff; display:flex; align-items:center; justify-content:space-between;
+  padding:14px 22px; box-shadow:0 2px 18px rgba(0,0,0,.15);
+}
+.topbar .brand{ display:flex; align-items:center; gap:12px; font-weight:700; font-size:16px; }
+.topbar .brand svg{ width:24px; height:24px; color:var(--cyan-light); }
+.brand-logo{
+  height:26px; width:auto; display:block; background:#fff; padding:5px 9px; border-radius:8px;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+.brand-sep{ width:1px; height:22px; background:rgba(255,255,255,.25); }
+.topbar .actions{ display:flex; gap:10px; align-items:center; }
+.btn{
+  border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.06); color:#fff;
+  padding:8px 14px; border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit;
+  display:inline-flex; align-items:center; gap:6px; text-decoration:none;
+}
+.btn:hover{ background:rgba(255,255,255,.15); }
+.btn svg{ width:15px; height:15px; }
+.tocToggle{ display:none; }
+
+/* ---------- layout ---------- */
+.layout{ display:grid; grid-template-columns:270px minmax(0,1fr); gap:0; max-width:1200px; margin:0 auto; }
+.sidebar{
+  position:sticky; top:58px; align-self:start; height:calc(100vh - 58px); overflow-y:auto;
+  padding:28px 18px 40px; border-right:1px solid var(--border);
+}
+.sidebar h6{ font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin:0 0 12px 8px; }
+.sidebar a{
+  display:flex; gap:10px; align-items:center; padding:8px 10px; border-radius:10px; color:var(--muted);
+  text-decoration:none; font-size:14px; font-weight:500; margin-bottom:2px;
+}
+.sidebar a .n{
+  flex:0 0 22px; height:22px; border-radius:6px; background:var(--border); color:var(--muted);
+  font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center;
+}
+.sidebar a:hover{ background:#eef1fb; color:var(--text); }
+.sidebar a.active{ background:linear-gradient(90deg,rgba(8,145,178,.1),rgba(124,58,237,.08)); color:var(--navy); }
+.sidebar a.active .n{ background:linear-gradient(135deg,var(--cyan),var(--violet)); color:#fff; }
+
+main{ padding:0 40px 80px; min-width:0; }
+.cover{ padding:60px 0 30px; max-width:760px; }
+.cover-logo{ height:44px; width:auto; display:block; margin-bottom:26px; }
+.cover .eyebrow{ color:var(--cyan); font-weight:700; letter-spacing:2px; text-transform:uppercase; font-size:13px; margin-bottom:14px; }
+.cover h1{ font-size:38px; line-height:1.35; margin:0 0 20px; }
+.cover .lead{
+  background:linear-gradient(135deg,var(--navy),#1c2352); color:#eef1ff; padding:22px 26px; border-radius:var(--radius);
+  font-size:17px; box-shadow:0 12px 30px rgba(11,14,36,.18);
+}
+.cover .lead b{ color:var(--cyan-light); }
+.meta-row{ display:flex; gap:24px; margin-top:22px; flex-wrap:wrap; color:var(--muted); font-size:14px; }
+
+article section{ max-width:760px; padding-top:56px; scroll-margin-top:76px; }
+article section:first-of-type{ padding-top:20px; }
+.sec-num{
+  display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(135deg,var(--cyan),var(--violet)); color:#fff; font-weight:800; font-size:15px; margin-right:10px;
+}
+h2{ font-size:27px; display:flex; align-items:center; gap:2px; margin:0 0 6px; }
+h2 .sub{ display:block; font-size:14px; font-weight:500; color:var(--muted); margin-left:46px; margin-top:2px; }
+h3{ font-size:19px; margin:28px 0 10px; color:var(--navy2); }
+p{ margin:0 0 14px; }
+.term{ color:var(--cyan); font-weight:700; }
+
+.card{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; box-shadow:0 2px 10px rgba(20,26,61,.04); }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+
+.callout{ display:flex; gap:14px; padding:16px 18px; border-radius:14px; margin:18px 0; font-size:15px; }
+.callout svg{ width:22px; height:22px; flex:0 0 22px; margin-top:1px; }
+.callout.info{ background:#eaf6fb; color:#0c5c73; border:1px solid #c9ecf5; }
+.callout.warn{ background:var(--warn-bg); color:#7a5b00; border:1px solid #f4e2a5; }
+.callout.good{ background:var(--good-bg); color:#0b6b3a; border:1px solid #bfe9d0; }
+.callout.quote{ background:#f4f2ff; color:#3d2c8d; border:1px solid #e1d9ff; font-style:italic; }
+
+blockquote{
+  margin:16px 0; padding:14px 18px; border-left:4px solid var(--cyan); background:#f1f8fb;
+  border-radius:0 12px 12px 0; font-size:15.5px; color:#28394a;
+}
+
+table{ width:100%; border-collapse:collapse; font-size:15px; margin:14px 0; }
+table th{ text-align:left; background:#f1f3fb; padding:10px 12px; font-size:13px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
+table td{ padding:11px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+table tr:last-child td{ border-bottom:none; }
+table.canvas td:first-child, table.canvas th:first-child{ width:34px; text-align:center; font-weight:800; color:var(--cyan); }
+table.canvas td:nth-child(2){ width:220px; font-weight:600; }
+
+.stepper{ display:flex; flex-direction:column; }
+.stepper .step{ display:flex; gap:16px; position:relative; padding-bottom:22px; }
+.stepper .step:last-child{ padding-bottom:0; }
+.stepper .step::after{
+  content:""; position:absolute; left:18px; top:38px; bottom:-4px; width:2px; background:var(--border);
+}
+.stepper .step:last-child::after{ display:none; }
+.stepper .num{
+  flex:0 0 37px; width:37px; height:37px; border-radius:10px; z-index:1;
+  background:linear-gradient(135deg,var(--cyan),var(--violet)); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px;
+}
+.stepper .body{ padding-top:5px; }
+.stepper .body h5{ margin:0 0 3px; font-size:15.5px; }
+.stepper .body h5 .en{ color:var(--cyan); font-weight:800; margin-right:4px; }
+.stepper .body p{ margin:0; font-size:14.5px; color:var(--muted); }
+
+.badge-list{ display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px; }
+.badge{ background:#eef1fb; border:1px solid var(--border); padding:6px 12px; border-radius:999px; font-size:13px; font-weight:600; color:var(--navy2); }
+
+.flow{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:20px 0; }
+.flow .box{ background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; font-size:14px; font-weight:600; box-shadow:0 2px 8px rgba(20,26,61,.05); text-align:center; }
+.flow .arr{ color:var(--cyan); font-weight:800; }
+.flow.vertical{ flex-direction:column; align-items:stretch; }
+.flow.vertical .arr{ align-self:center; }
+
+.pipeline{ display:flex; gap:10px; overflow-x:auto; padding:6px 2px 18px; }
+.pipeline .node{
+  flex:0 0 150px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 12px;
+  text-align:center; font-size:13.5px; font-weight:700; position:relative; box-shadow:0 3px 10px rgba(20,26,61,.06);
+}
+.pipeline .node .ic{ width:26px; height:26px; margin:0 auto 8px; color:var(--cyan); }
+.pipeline .node.final{ background:linear-gradient(135deg,var(--navy),#1c2352); color:#fff; }
+.pipeline .node.final .ic{ color:var(--cyan-light); }
+.pipeline .sep{ display:flex; align-items:center; color:var(--muted); font-weight:800; }
+
+.list-check{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+.list-check li{ display:flex; gap:10px; align-items:flex-start; font-size:15px; }
+.list-check svg{ width:18px; height:18px; flex:0 0 18px; margin-top:3px; }
+.list-check.good li svg{ color:var(--good); }
+.list-check.bad li svg{ color:var(--bad); }
+.card.good{ background:var(--good-bg); border-color:#bfe9d0; }
+.card.bad{ background:var(--bad-bg); border-color:#f3c6c1; }
+.card h4{ margin:0 0 12px; display:flex; align-items:center; gap:8px; font-size:16px; }
+.card.good h4{ color:#0b6b3a; }
+.card.bad h4{ color:#a12b20; }
+
+/* ---------- principle hero (1 agent = 1 job) ---------- */
+.principle{
+  margin:20px 0; border-radius:18px; padding:26px 28px; color:#fff; position:relative; overflow:hidden;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(8,145,178,.4), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(124,58,237,.45), transparent 55%),
+    linear-gradient(160deg,var(--navy),#171d43);
+}
+.principle .eq{ font-size:22px; font-weight:800; margin:0 0 6px; }
+.principle .eq b{ color:var(--cyan-light); }
+.principle .rule{ font-size:15px; color:#cfd5ff; margin:0; }
+.principle .rule .hi{ color:#fff; font-weight:700; }
+
+.dodont{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+.dodont .col{ border-radius:14px; padding:18px 20px; }
+.dodont .col.dont{ background:var(--bad-bg); border:1px solid #f3c6c1; }
+.dodont .col.do{ background:var(--good-bg); border:1px solid #bfe9d0; }
+.dodont h4{ margin:0 0 12px; font-size:15px; display:flex; align-items:center; gap:8px; }
+.dodont .col.dont h4{ color:#a12b20; }
+.dodont .col.do h4{ color:#0b6b3a; }
+.dodont ul{ margin:0; padding-left:18px; display:flex; flex-direction:column; gap:7px; font-size:14px; }
+.dodont .col.dont .emph{ color:#a12b20; font-weight:700; }
+.dodont .col.do .emph{ color:#0b6b3a; font-weight:700; }
+
+/* ---------- sub-agent grid (topup) ---------- */
+.subagent-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:16px 0; }
+.subagent{ background:#fff; border:1px solid var(--border); border-left:4px solid var(--cyan); border-radius:12px; padding:15px 16px; box-shadow:0 3px 10px rgba(20,26,61,.05); }
+.subagent .name{ font-weight:800; font-size:15px; margin-bottom:4px; display:flex; align-items:center; gap:7px; color:var(--navy2); }
+.subagent .name .em{ font-size:17px; }
+.subagent .desc{ font-size:13.5px; color:var(--muted); line-height:1.6; }
+.subagent.how{ border-left-color:var(--violet); background:linear-gradient(135deg,#f6f3ff,#fff); }
+@media (max-width:920px){ .subagent-grid{ grid-template-columns:1fr; } }
+
+/* ---------- advanced reference box ---------- */
+.advanced{ margin:20px 0; border:1px dashed #c3b8ec; border-radius:16px; padding:22px 24px; background:linear-gradient(135deg,#faf8ff,#fff); }
+.advanced .tag-adv{ display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--violet); background:#f0eaff; padding:5px 11px; border-radius:999px; margin-bottom:12px; }
+.advanced table td:first-child{ font-weight:700; color:var(--violet); white-space:nowrap; width:150px; }
+.advanced .disclaimer{ font-size:13px; color:var(--muted); margin-top:10px; font-style:italic; }
+
+.ent-card{ display:flex; flex-direction:column; gap:8px; }
+.ent-card .tag{ font-size:12px; font-weight:700; color:var(--violet); text-transform:uppercase; letter-spacing:.5px; }
+.ent-card h4{ margin:0; font-size:17px; }
+.ent-card .flowmini{ font-size:13.5px; color:var(--muted); background:#f5f6fb; padding:10px 12px; border-radius:10px; margin-top:4px; }
+.ent-card .guardrail{ font-size:13px; color:var(--warn); }
+
+.prompt-box{
+  position:relative; background:#0b0e24; color:#dfe4ff; border-radius:14px; padding:18px 20px 18px 20px;
+  font-family:'Sarabun',monospace; font-size:14.5px; line-height:1.8; white-space:pre-wrap; margin:14px 0;
+}
+.copy-btn{
+  position:absolute; top:12px; right:12px; cursor:pointer; border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.08); color:#dfe4ff; padding:6px 12px; border-radius:8px; font-size:12px; font-family:inherit;
+}
+.copy-btn:hover{ background:rgba(255,255,255,.18); }
+
+.fill-table td[contenteditable]{ outline:none; border-bottom:1px dashed #c7cbe0; min-height:22px; }
+.fill-table td[contenteditable]:focus{ background:#f1f8fb; border-color:var(--cyan); }
+.fill-table td[contenteditable]:empty:before{ content:attr(data-ph); color:#b7bcd6; }
+
+/* ---------- agent canvas board ---------- */
+.canvas-board{
+  display:grid; gap:14px; margin:18px 0 30px;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-areas:
+    "goal goal goal"
+    "user input tool"
+    "skill skill output"
+    "approval approval approval";
+}
+.canvas-board .note{
+  background:#fff; border:1px solid var(--border); border-top:4px solid var(--cyan);
+  border-radius:12px; padding:16px 18px; box-shadow:0 4px 14px rgba(20,26,61,.06);
+}
+.canvas-board .note .lbl{ font-size:11px; text-transform:uppercase; letter-spacing:1px; font-weight:800; color:var(--muted); margin-bottom:8px; }
+.canvas-board .note .val{ font-size:14.5px; font-weight:600; line-height:1.65; white-space:pre-wrap; color:var(--text); }
+.canvas-board .a-goal{ grid-area:goal; border-top-color:var(--violet); background:linear-gradient(135deg,#f6f3ff,#fff); }
+.canvas-board .a-user{ grid-area:user; }
+.canvas-board .a-input{ grid-area:input; }
+.canvas-board .a-tool{ grid-area:tool; }
+.canvas-board .a-skill{ grid-area:skill; }
+.canvas-board .a-output{ grid-area:output; border-top-color:var(--good); }
+.canvas-board .a-approval{ grid-area:approval; border-top-color:var(--bad); background:linear-gradient(135deg,#fff6f5,#fff); }
+.canvas-board.empty .val{ color:#c3c7de; }
+
+.canvas-form{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.canvas-form label{ display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:700; color:var(--navy2); }
+.canvas-form textarea{
+  font-family:inherit; font-size:14px; padding:10px 12px; border:1px solid var(--border); border-radius:10px;
+  resize:vertical; min-height:58px; color:var(--text);
+}
+.canvas-form textarea:focus{ outline:none; border-color:var(--cyan); box-shadow:0 0 0 3px rgba(8,145,178,.12); }
+.btn-generate{
+  margin-top:16px; padding:12px 22px; border-radius:12px; border:none; cursor:pointer; font-family:inherit;
+  font-weight:700; font-size:14.5px; color:#fff; background:linear-gradient(135deg,var(--cyan),var(--violet));
+  box-shadow:0 8px 18px rgba(8,145,178,.25);
+}
+.btn-generate:hover{ filter:brightness(1.08); }
+@media (max-width:920px){
+  .canvas-board{ grid-template-columns:1fr; grid-template-areas:"goal" "user" "input" "tool" "skill" "output" "approval"; }
+  .canvas-form{ grid-template-columns:1fr; }
+}
+
+.divider{ height:1px; background:var(--border); margin:44px 0 0; }
+
+.glossary-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.gterm{ display:flex; gap:10px; }
+.gterm b{ min-width:78px; color:var(--cyan); }
+
+/* ---------- key takeaways poster ---------- */
+.poster{
+  margin-top:26px; border-radius:22px; padding:44px 40px; color:#fff;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(8,145,178,.35), transparent 55%),
+    radial-gradient(circle at 95% 100%, rgba(124,58,237,.4), transparent 55%),
+    linear-gradient(160deg,var(--navy),#151a3c 60%,#0b0e24);
+}
+.poster h2{ color:#fff; margin-bottom:22px; }
+.poster ol{ margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:16px; counter-reset:pn; }
+.poster li{ display:flex; gap:16px; align-items:flex-start; font-size:17px; font-weight:600; counter-increment:pn; }
+.poster li::before{
+  content:counter(pn); flex:0 0 34px; height:34px; border-radius:10px; background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.25); display:flex; align-items:center; justify-content:center; font-weight:800; color:var(--cyan-light);
+}
+
+footer.pagefoot{ max-width:760px; padding:50px 0 10px; color:var(--muted); font-size:13px; }
+.credit{ margin-top:16px; padding-top:16px; border-top:1px solid var(--border); font-size:12.5px; color:var(--muted); }
+.credit a{ color:var(--cyan); text-decoration:none; font-weight:600; }
+.credit a:hover{ text-decoration:underline; }
+
+/* ---------- back to top ---------- */
+#toTop{
+  position:fixed; right:26px; bottom:26px; width:46px; height:46px; border-radius:50%; z-index:40;
+  background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  box-shadow:0 8px 20px rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:opacity .25s ease;
+}
+#toTop.show{ opacity:1; pointer-events:auto; }
+#toTop svg{ width:20px; height:20px; }
+
+/* ---------- responsive ---------- */
+@media (max-width:920px){
+  .layout{ grid-template-columns:1fr; }
+  .sidebar{
+    position:fixed; top:58px; left:0; bottom:0; width:78%; max-width:320px; background:#fff; z-index:39;
+    transform:translateX(-105%); transition:transform .3s ease; box-shadow:12px 0 30px rgba(0,0,0,.15);
+  }
+  .sidebar.open{ transform:translateX(0); }
+  .tocToggle{ display:inline-flex; }
+  main{ padding:0 20px 70px; }
+  .grid2,.grid3{ grid-template-columns:1fr; }
+  .cover h1{ font-size:29px; }
+  .pipeline{ padding-bottom:10px; }
+}
+
+/* ---------- print ---------- */
+@media print{
+  .topbar,.sidebar,#toTop,#progress,.copy-btn,.tocToggle{ display:none !important; }
+  .layout{ display:block; }
+  main{ padding:0; }
+  body{ background:#fff; font-size:12.5px; }
+  a{ color:inherit; text-decoration:none; }
+  .card,.callout,.prompt-box{ box-shadow:none !important; }
+  .poster{ page-break-before:always; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  section{ padding-top:18px !important; }
+  @page{ size:A4; margin:16mm; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div class="topbar">
+  <div class="brand">
+    <img src="tidlor-pcl--600.png" alt="TIDLOR" class="brand-logo">
+    <span class="brand-sep"></span>
+    <span style="font-weight:400;opacity:.85;">AI Agent Training · Handout ฉบับเต็ม</span>
+  </div>
+  <div class="actions">
+    <button class="btn tocToggle" id="tocToggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>สารบัญ</button>
+    <button class="btn" id="printBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/></svg>พิมพ์ / บันทึก PDF</button>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <h6>สารบัญ</h6>
+    <a href="#intro"><span class="n">•</span> เกริ่นนำ</a>
+    <a href="#components"><span class="n">1</span> ส่วนประกอบ Agent 8 ตัว</a>
+    <a href="#mcp"><span class="n">2</span> MCP คืออะไร</a>
+    <a href="#skill-tool"><span class="n">3</span> Skill vs Tool</a>
+    <a href="#harness"><span class="n">4</span> Harness คืออะไร</a>
+    <a href="#agentic"><span class="n">5</span> Agentic AI: ก้าวถัดไป</a>
+    <a href="#usecases"><span class="n">6</span> งานที่เหมาะ/ไม่เหมาะ</a>
+    <a href="#guardrail"><span class="n">7</span> กติกาความปลอดภัย</a>
+    <a href="#safe-start"><span class="n">8</span> เริ่มทดลองอย่างปลอดภัย</a>
+    <a href="#enterprise"><span class="n">9</span> ตัวอย่าง Enterprise Agent</a>
+    <a href="#canvas"><span class="n">10</span> Agent Canvas 7 ช่อง</a>
+    <a href="#glossary"><span class="n">11</span> สรุปคำศัพท์</a>
+    <a href="#takeaways"><span class="n">12</span> Key Takeaways</a>
+  </nav>
+
+  <main>
+    <div class="cover" id="intro">
+      <img src="tidlor-pcl--600.png" alt="TIDLOR" class="cover-logo">
+      <div class="eyebrow">สำหรับคนที่อยากไปต่อ</div>
+      <h1>เอกสารนี้สำหรับคนที่อยากไปต่อ<br>ทุกศัพท์ที่คลาสจงใจไม่พูด อยู่ที่นี่ครบ</h1>
+      <div class="lead">
+        ในห้องเรียนวันนั้น เราจงใจตัดศัพท์และรายละเอียดหลายอย่างออก เพื่อไม่ให้ทุกคนรู้สึกว่า "ยาก" —
+        แต่ถ้าคุณอ่านมาถึงตรงนี้ แปลว่าคุณพร้อมไปต่อแล้ว เอกสารฉบับนี้จะเติมทุกช่องว่างที่คลาสสดจงใจข้าม
+        ตั้งแต่ส่วนประกอบครบทั้ง 8 ตัวของ <b>Agent</b>, ความหมายของ <b>MCP</b> และ <b>Harness</b> แบบละเอียด,
+        ไปจนถึง <b>Agentic AI</b> — แนวคิดการต่อ Agent หลายตัวเป็นทีมงานอัตโนมัติ ซึ่งเป็นก้าวถัดไปหลังจากออกแบบ Agent ตัวแรกได้แล้ว
+      </div>
+      <div class="meta-row">
+        <span>อ่านต่อจาก: สไลด์สอนสด 60 นาที + ใบงาน Workshop</span>
+        <span>เวลาอ่านโดยประมาณ: 20–25 นาที</span>
+      </div>
+    </div>
+
+    <article>
+
+      <!-- 1 -->
+      <section id="components">
+        <h2><span class="sec-num">1</span>ส่วนประกอบ AI Agent ฉบับเต็ม 8 ตัว</h2>
+        <span class="sub" style="margin-left:0;display:block;margin-bottom:16px;">ในคลาสสดเรายุบเหลือ 3 กลุ่ม: สมอง + มือ + คู่มือ — นี่คือฉบับเต็มที่อยู่เบื้องหลังสมการนั้น</span>
+
+        <div class="card">
+          <div class="stepper">
+            <div class="step"><div class="num">1</div><div class="body"><h5><span class="en">Goal</span>เป้าหมายของงาน</h5><p>ถ้าไม่ชัด agent ทำงานผิดทิศ</p></div></div>
+            <div class="step"><div class="num">2</div><div class="body"><h5><span class="en">LLM Brain</span>สมอง</h5><p>สมองด้านภาษาและการวางแผน (Claude, GPT, Gemini)</p></div></div>
+            <div class="step"><div class="num">3</div><div class="body"><h5><span class="en">Tools</span>เครื่องมือ</h5><p>Search, SQL, Email, Calendar, Excel, ระบบภายใน</p></div></div>
+            <div class="step"><div class="num">4</div><div class="body"><h5><span class="en">MCP</span>ปลั๊กมาตรฐาน</h5><p>มาตรฐานเชื่อมต่อ AI กับระบบต่างๆ (เหมือน USB-C)</p></div></div>
+            <div class="step"><div class="num">5</div><div class="body"><h5><span class="en">Skill</span>คู่มือ</h5><p>SOP เฉพาะงานที่ agent หยิบอ่านเมื่อทำงานประเภทนั้น</p></div></div>
+            <div class="step"><div class="num">6</div><div class="body"><h5><span class="en">Memory</span>ความจำ</h5><p>format รายงาน, KPI ที่องค์กรใช้, preference ผู้ใช้</p></div></div>
+            <div class="step"><div class="num">7</div><div class="body"><h5><span class="en">Guardrail</span>กติกาความปลอดภัย</h5><p>กติกาความปลอดภัย + จุดที่คนต้องอนุมัติ</p></div></div>
+            <div class="step"><div class="num">8</div><div class="body"><h5><span class="en">Harness</span>โครงควบคุม</h5><p>รัน loop วางแผน→ทำ→ตรวจ, คุมสิทธิ์, เก็บ log, จัดการ error</p></div></div>
+          </div>
+        </div>
+
+        <h3>เทียบกับสมการที่เรียนในคลาส</h3>
+        <table>
+          <tr><th>กลุ่มที่สอนในคลาส</th><th>ครอบคลุมส่วนประกอบตามตำรา</th></tr>
+          <tr><td><b>สมอง</b></td><td>LLM Brain, Goal (เป้าหมายที่ใส่ให้สมองคิด), Memory/Context</td></tr>
+          <tr><td><b>มือ</b></td><td>Tools, MCP/Connector</td></tr>
+          <tr><td><b>คู่มือ</b></td><td>Skill</td></tr>
+          <tr><td><b>เชิงอรรถ</b></td><td>Harness = ตัวห่อทั้งหมด, Guardrail/Approval = กติกาความปลอดภัย</td></tr>
+        </table>
+
+        <div class="callout info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
+          <div><b>จุดที่คนมักสับสน:</b> โมเดลตัวเดียวกัน แต่คนละ Harness = ความสามารถต่างกันมาก
+          เหมือนวิศวกรคนเดียวกันทำงานในออฟฟิศที่เครื่องมือครบ เทียบกับนั่งทำงานที่ร้านกาแฟมีแค่กระดาษ</div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- 2 -->
+      <section id="mcp">
+        <h2><span class="sec-num">2</span>MCP คืออะไร (แบบละเอียด)</h2>
+        <p>ในคลาสสด เราพูดถึง MCP แค่ประโยคเดียวว่า "ปลั๊กมาตรฐานที่ต่อเครื่องมือเข้ากับ AI" แล้วก็ผ่านไป
+        เพราะชื่อเต็มไม่ใช่สิ่งสำคัญที่สุด — สิ่งสำคัญคือเข้าใจว่า <span class="term">MCP</span> ทำหน้าที่อะไรในระบบของ Agent</p>
+
+        <blockquote>"ออฟฟิศติดปลั๊กมาตรฐานไว้ทุกโต๊ะ พนักงานคนไหนมาก็เสียบใช้ได้ ไม่ต้องเดินสายใหม่ทุกครั้ง"</blockquote>
+
+        <p>ก่อนหน้านี้ ถ้าอยากให้ AI ต่อกับระบบขององค์กร (เช่น ฐานข้อมูลขาย, ปฏิทิน, อีเมล) ทีมพัฒนาต้องเขียนตัวเชื่อมต่อ (connector)
+        ขึ้นใหม่ทุกครั้งที่เปลี่ยน AI ตัวที่ใช้ — <span class="term">MCP</span> คือมาตรฐานกลางที่ทำให้ "ทำ connector ครั้งเดียว
+        AI ตัวไหนก็เสียบใช้ได้" เหมือนที่ USB-C ทำให้อุปกรณ์ต่างยี่ห้อชาร์จสายเดียวกันได้</p>
+
+        <div class="flow">
+          <div class="box">ระบบภายใน<br><span style="color:var(--muted);font-weight:400;">Sales DB · Calendar · Email · Excel</span></div>
+          <div class="arr">⇄</div>
+          <div class="box" style="border-color:var(--cyan);color:var(--cyan);">MCP<br><span style="color:var(--muted);font-weight:400;">ปลั๊กมาตรฐาน</span></div>
+          <div class="arr">⇄</div>
+          <div class="box">Agent<br><span style="color:var(--muted);font-weight:400;">(สมอง + มือ)</span></div>
+        </div>
+
+        <p>พูดง่ายๆ: <b>Tools</b> คือ "สิ่งที่ agent ทำได้" (ค้นเว็บ, อ่านไฟล์, ดูปฏิทิน) ส่วน <b>MCP</b> คือ "มาตรฐานของสายที่เสียบ"
+        ที่ทำให้การเพิ่ม Tool ใหม่ๆ ในอนาคตไม่ต้องเริ่มนับหนึ่งใหม่ทุกครั้ง</p>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- 3 -->
+      <section id="skill-tool">
+        <h2><span class="sec-num">3</span>Skill vs Tool ต่างกันตรงไหน</h2>
+        <p>สองคำนี้มักถูกเข้าใจปนกัน ทั้งที่ทำหน้าที่คนละอย่างในสมการ <span class="term">Agent = สมอง + มือ + คู่มือ</span></p>
+
+        <div class="grid2">
+          <div class="card">
+            <h4 style="color:var(--cyan);">🖐 Tool = มือ</h4>
+            <p style="margin-bottom:8px;">สิทธิ์เข้าถึงระบบ + อุปกรณ์ที่ใช้ลงมือทำงานจริง</p>
+            <blockquote style="margin:0;">"พนักงานฉลาดแค่ไหน ถ้าไม่มีคอมพิวเตอร์ ไม่มีสิทธิ์เข้าอีเมล ก็ทำได้แค่ตอบจากความจำ"</blockquote>
+          </div>
+          <div class="card">
+            <h4 style="color:var(--violet);">📘 Skill = คู่มือ</h4>
+            <p style="margin-bottom:8px;">SOP เฉพาะงานที่บอกว่า "งานของเราทำกันแบบไหน"</p>
+            <blockquote style="margin:0;">"เก่งแค่ไหนก็ไม่รู้ว่าสไลด์บริษัทเราใช้ template ไหน — Skill คือคู่มือที่หยิบอ่านเฉพาะตอนทำงานประเภทนั้น"</blockquote>
+          </div>
+        </div>
+
+        <table>
+          <tr><th></th><th>Tool</th><th>Skill</th></tr>
+          <tr><td><b>ตอบคำถาม</b></td><td>agent "ทำอะไรได้บ้าง"</td><td>agent "ทำแบบไหนถึงจะถูกสไตล์เรา"</td></tr>
+          <tr><td><b>ตัวอย่าง</b></td><td>ค้นเว็บ, เปิดปฏิทิน, ดึงข้อมูลขาย, คำนวณ</td><td>format รายงานผู้บริหาร, นิยาม KPI, tone การตอบลูกค้า</td></tr>
+          <tr><td><b>ถ้าไม่มี</b></td><td>agent ทำได้แค่ตอบจากความรู้เดิม ไม่ลงมือจริง</td><td>agent ทำงานแบบ freelance ที่เดาสไตล์เอาเอง</td></tr>
+        </table>
+
+        <div class="callout good">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          <div>จำง่ายๆ: <b>Tool ทำให้ agent "ทำงานได้"</b> ส่วน <b>Skill ทำให้ agent "ทำงานถูกแบบที่องค์กรต้องการ"</b></div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- 4 -->
+      <section id="harness">
+        <h2><span class="sec-num">4</span>Harness คืออะไร</h2>
+        <p>ถ้า Tool คือมือ และ Skill คือคู่มือ แล้วอะไรที่ทำให้ทุกอย่างทำงานประสานกันจนจบงาน? นั่นคือหน้าที่ของ <span class="term">Harness</span></p>
+
+        <blockquote>"ตัวโปรแกรมที่ห่อทั้งหมดไว้แล้วคุมให้มันทำงานวนจนเสร็จ เขาเรียก Harness — เหมือนตัวออฟฟิศที่พนักงานนั่งทำงาน"</blockquote>
+
+        <p>Harness ทำหน้าที่ 4 อย่างหลักๆ:</p>
+        <ul class="list-check good">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> รัน loop "วางแผน → ลงมือทำ → ตรวจผล" จนกว่างานจะเสร็จ</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> คุมสิทธิ์การเข้าถึงระบบและข้อมูลของ agent</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> เก็บ log ทุกการทำงานไว้ย้อนดูได้</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> จัดการเมื่อเกิด error ระหว่างทำงาน</li>
+        </ul>
+
+        <div class="callout info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
+          <div>นี่คือเหตุผลว่าทำไม "โมเดลตัวเดียวกัน แต่คนละ Harness ถึงทำงานต่างกันมาก" — สมองอาจฉลาดเท่ากัน
+          แต่ถ้า Harness ไม่ดี agent ก็ทำงานวนซ้ำผิดที่ ไม่รู้จักหยุด หรือไม่มีจุดตรวจสอบตัวเอง</div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- 5 -->
+      <section id="agentic">
+        <h2><span class="sec-num">5</span>Agentic AI: ก้าวถัดไปหลัง Agent ตัวแรก</h2>
+        <span class="sub" style="margin-left:0;display:block;margin-bottom:16px;">ส่วนนี้คือ "คลาสที่ 2" — เนื้อหาที่จงใจไม่สอนสดวันนั้น เพราะถ้ายังแยก LLM กับ Agent ไม่ออก การโยนเรื่องทีม AI หลายตัวเข้ามาจะยิ่งงง</span>
+
+        <p><span class="term">Agentic AI</span> คือแนวคิดออกแบบระบบงานให้ Agent หลายตัว/หลายบทบาท ทำงานร่วมกันเป็นทีม
+        แทนที่จะให้ Agent ตัวเดียวทำทุกอย่างตั้งแต่ต้นจนจบ</p>
+
+        <h3>หัวใจของ Agentic AI: 1 Agent = 1 งาน</h3>
+        <div class="principle">
+          <p class="eq">Agent ที่ดี = <b>งานแคบ + ข้อมูลครบ</b> → ยิ่งงานเล็ก ยิ่งแม่นยำ และคุมง่าย</p>
+          <p class="rule">อย่าสร้าง Agent ตัวเดียวให้ทำทุกอย่าง — <span class="hi">แตกเป็นตัวเล็กๆ ที่ทำงานเดียว</span> แล้วให้มันส่งงานต่อกัน นี่คือสิ่งที่เปลี่ยน "AI ที่พอใช้ได้" ให้กลายเป็น "ระบบที่เชื่อถือได้"</p>
+        </div>
+
+        <div class="dodont">
+          <div class="col dont">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>แบบที่ควรเลี่ยง</h4>
+            <p style="margin:0 0 8px;font-weight:700;">"Credit Assessment Agent" ตัวเดียว</p>
+            <ul>
+              <li>ดึงประวัติ + เช็กเอกสาร + ประเมินการจ่าย + เทียบ policy + เขียน memo <span class="emph">รวมในตัวเดียว</span></li>
+              <li>ทดสอบ/แก้ยาก — ผิดตรงไหนไม่รู้</li>
+              <li>ความแม่นต่ำ · เปลี่ยน policy ที = กระทบทั้งตัว</li>
+            </ul>
+          </div>
+          <div class="col do">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>แบบที่ควรทำ</h4>
+            <p style="margin:0 0 8px;font-weight:700;">แตกเป็น Agent ย่อย 5 ตัว ทำงานเดียว</p>
+            <ul>
+              <li>Memory · Document · Repayment · Policy · Memo</li>
+              <li>แต่ละตัว<span class="emph">แม่นยำ</span> · ทดสอบแยกได้ · นำกลับมาใช้ซ้ำได้</li>
+              <li>เปลี่ยน policy → แก้แค่ Policy Agent ตัวเดียว</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.3 1 2.5h6c0-1.2.4-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg>
+          <div><b>หลักคิดง่ายๆ:</b> ถ้าอธิบายงานของ Agent ต้องใช้คำว่า "และ" หลายครั้ง → แปลว่าควรแตกเป็นหลายตัว</div>
+        </div>
+
+        <h3>ตัวอย่างจริง: แตกงาน Topup เป็น Agent ย่อย</h3>
+        <p>งาน <b>"พิจารณาขอวงเงินเพิ่ม (Topup)"</b> ดูเหมือนงานเดียว แต่จริงๆ ประกอบด้วยหลายขั้นที่ "ตัดสินใจ/ประเมิน" คนละเรื่อง — แตกเป็นงานเล็กที่สุดที่ทำได้:</p>
+        <div class="subagent-grid">
+          <div class="subagent"><div class="name"><span class="em">🧠</span>Memory Agent</div><div class="desc">ลูกค้าคนนี้เคยทำอะไร · ผลครั้งก่อน</div></div>
+          <div class="subagent"><div class="name"><span class="em">📄</span>Document Agent</div><div class="desc">เอกสารครบไหม · ขาดอะไร</div></div>
+          <div class="subagent"><div class="name"><span class="em">📊</span>Repayment Agent</div><div class="desc">จ่ายตรงเวลาแค่ไหน → เกรด good/fair/poor</div></div>
+          <div class="subagent"><div class="name"><span class="em">📋</span>Policy Agent</div><div class="desc">เข้าเกณฑ์ topup ไหม · วงเงินได้เท่าไหร่</div></div>
+          <div class="subagent"><div class="name"><span class="em">📝</span>Credit Memo Agent</div><div class="desc">รวมผลทุกตัว → เขียน memo ให้เจ้าหน้าที่</div></div>
+          <div class="subagent how"><div class="name"><span class="em">👉</span>วิธีหา</div><div class="desc">ถามว่า "ขั้นตอนที่คนทำ มีกี่สเต็ป" — แต่ละสเต็ปที่ "ตัดสินใจ/ประเมิน" 1 อย่าง = Agent 1 ตัว</div></div>
+        </div>
+        <div class="callout good">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          <div>เริ่มจากขั้นตอนที่คนทำอยู่แล้ว · แต่ละสเต็ปที่ "ตัดสินใจ/ประเมิน" 1 อย่าง = Agent 1 ตัว · ปิดท้ายด้วยคนอนุมัติเสมอ</div>
+        </div>
+
+        <h3>ตัวอย่าง Pipeline (ต่อ Agent ย่อยเป็นสายงาน)</h3>
+        <div class="pipeline">
+          <div class="node">
+            <svg class="ic icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12.5V6a1.5 1.5 0 0 1 3 0v5M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11.2V6a1.5 1.5 0 0 1 3 0v7M17 9.5a1.5 1.5 0 0 1 3 0V15c0 4-2.5 7-7 7s-6.5-2-8-4.5L3 13.8a1.6 1.6 0 0 1 2.4-2.1L8 14"/></svg>
+            คำถาม<br>ผู้บริหาร
+          </div>
+          <div class="sep">→</div>
+          <div class="node">
+            <svg class="ic icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M14 4v5h5"/></svg>
+            Data Agent<br><span style="font-weight:400;color:var(--muted);">ดึงข้อมูล</span>
+          </div>
+          <div class="sep">→</div>
+          <div class="node">
+            <svg class="ic icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6"/></svg>
+            Insight Agent<br><span style="font-weight:400;color:var(--muted);">วิเคราะห์</span>
+          </div>
+          <div class="sep">→</div>
+          <div class="node">
+            <svg class="ic icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            QA Agent<br><span style="font-weight:400;color:var(--muted);">ตรวจ</span>
+          </div>
+          <div class="sep">→</div>
+          <div class="node">
+            <svg class="ic icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+            Summary Agent<br><span style="font-weight:400;color:var(--muted);">สรุป</span>
+          </div>
+          <div class="sep">→</div>
+          <div class="node final">
+            <svg class="ic icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 6L9 17l-5-5"/></svg>
+            คนอนุมัติ
+          </div>
+        </div>
+
+        <div class="callout quote">"Agentic AI คือการออกแบบงานใหม่ ไม่ใช่แค่เอา ChatGPT ไปแปะในระบบ"</div>
+
+        <h3>จะเริ่มต้นสู่ Agentic AI ยังไง</h3>
+        <p>ไม่ต้องกระโดดไปสร้างทีม Agent 5 ตัวตั้งแต่วันแรก ใช้สมการเดิมที่เรียนมา (Agent = สมอง + มือ + คู่มือ)
+        แล้วขยายทีละขั้น:</p>
+        <ol style="padding-left:20px; display:flex; flex-direction:column; gap:10px;">
+          <li><b>เริ่มจาก Agent เดียวที่ทำงานตัวเองได้เสถียรก่อน</b> — ใช้ Agent Canvas (Section 10) ออกแบบให้เสร็จ 1 ตัว</li>
+          <li><b>สังเกตว่างานนั้นมีกี่ขั้นตอนที่ "ลักษณะงานต่างกันชัดเจน"</b> เช่น ขั้นดึงข้อมูล ต่างจากขั้นวิเคราะห์ ต่างจากขั้นตรวจสอบ</li>
+          <li><b>แยกแต่ละขั้นเป็น Agent ย่อยของตัวเอง</b> — แต่ละตัวมี Goal, Tool, Skill เฉพาะทางของมันเอง ไม่ต้องรู้ทุกอย่างเหมือน Agent ตัวแรก</li>
+          <li><b>ต่อผลลัพธ์ของ Agent หนึ่งให้เป็น input ของอีกตัว</b> เหมือนพนักงานส่งงานต่อกันเป็นทอดๆ ในออฟฟิศ</li>
+          <li><b>ยังคงจุดอนุมัติของคนไว้ท้ายสุดเสมอ</b> — ไม่ว่าจะมี Agent กี่ตัวต่อกัน กติกาความปลอดภัยไม่เปลี่ยน</li>
+        </ol>
+
+        <h3>3 คำถามก่อนสร้าง Agent (Checklist)</h3>
+        <p>ก่อนลงมือทำ Agent ตัวใดตัวหนึ่ง ถามตัวเอง 3 ข้อนี้ — ใช้ได้กับทุกงาน:</p>
+        <div class="card">
+          <div class="stepper">
+            <div class="step"><div class="num">1</div><div class="body"><h5>งานนี้ "ทำอย่างเดียว" หรือยัง?</h5><p>ถ้าอธิบายต้องใช้คำว่า "และ" หลายครั้ง → แตกเป็นหลายตัว (1 Agent = 1 งาน)</p></div></div>
+            <div class="step"><div class="num">2</div><div class="body"><h5>Agent นี้ต้องใช้ "ข้อมูลอะไร"?</h5><p>ระบุข้อมูลที่ต้องดึง → นั่นคือ Tool (และมาตรฐาน MCP) ที่ต้องเตรียมให้ Agent ตัวนั้น</p></div></div>
+            <div class="step"><div class="num">3</div><div class="body"><h5>ตรงไหน "คนต้องอนุมัติ"?</h5><p>Agent แค่แนะนำ · ทุกการตัดสินใจสำคัญต้องผ่านคนอนุมัติเสมอ</p></div></div>
+          </div>
+        </div>
+        <div class="callout quote">แตกงานให้เล็ก → รู้ว่าต้องใช้ข้อมูลอะไร (MCP) → ร้อยเป็น flow → ให้ AI สั่งการ · คนอนุมัติเสมอ</div>
+
+        <div class="advanced">
+          <span class="tag-adv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.6 5.7 21l2.3-7.2-6-4.4h7.6z"/></svg>อ้างอิงขั้นสูง · สำหรับคนที่จะออกแบบเชิงระบบ</span>
+          <h3 style="margin-top:0;">5D Agent Framework</h3>
+          <p style="font-size:14.5px;">เมื่อออกแบบ Agent ที่ซับซ้อนขึ้น มีอีกกรอบคิดที่ช่วยไล่ให้ครบทุกมิติ — มองเป็น "ส่วนขยาย" ของสมการหลัก <b>สมอง + มือ + คู่มือ</b> ไม่ใช่โมเดลใหม่ที่ต้องท่องแทน:</p>
+          <table>
+            <tr><th>Dimension</th><th>ความหมาย</th><th>ตรงกับสมการหลัก</th></tr>
+            <tr><td>🔍 Detect</td><td>trigger / routing — รู้ว่าเมื่อไรควรทำงาน</td><td>สมอง (Goal)</td></tr>
+            <tr><td>🧭 Decide</td><td>หลักฐาน / คำแนะนำ — ตัดสินบนข้อมูล</td><td>สมอง + คู่มือ</td></tr>
+            <tr><td>⚡ Act</td><td>ขอบเขต — ลงมือ โดยมีคนอนุมัติจุดเสี่ยง</td><td>มือ + กติกา</td></tr>
+            <tr><td>📚 Learn</td><td>จำผล / feedback — ดีขึ้นจากงานที่ผ่านมา</td><td>สมอง (Memory)</td></tr>
+            <tr><td>🛡 Govern</td><td>guardrail / citation / fallback</td><td>กติกาความปลอดภัย</td></tr>
+          </table>
+          <p class="disclaimer">ในคลาสสดเราไม่สอนกรอบนี้ เพราะจะเพิ่มศัพท์และโมเดลที่ 2 พร้อมกัน — เก็บไว้ใช้ตอนออกแบบระบบจริงเท่านั้น</p>
+        </div>
+
+        <div class="callout warn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 1 21h22z"/><path d="M12 9v5M12 17h.01"/></svg>
+          <div>เหตุผลที่ไม่สอนสดในคลาสแรก: สำหรับคนที่ยังแยก LLM กับ Agent ไม่ออก การโยน "ทีม AI หลายตัว" เข้ามา
+          คือการสอนวิชาที่สองก่อนสอบผ่านวิชาแรก — ถ้าคุณอ่านมาถึงตรงนี้ แปลว่าคุณผ่านวิชาแรกแล้ว</div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- 6 -->
+      <section id="usecases">
+        <h2><span class="sec-num">6</span>งานที่เหมาะ / ยังไม่ควรให้ Agent ทำ</h2>
+        <div class="grid2">
+          <div class="card good">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20 6L9 17l-5-5"/></svg>เหมาะกับ Agent</h4>
+            <ul class="list-check good">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>สรุปรายงานประจำวัน-สัปดาห์</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>หายอดขาย/operation ที่ผิดปกติ</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>สรุปประชุม + ติดตาม action</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>ตรวจเอกสารเบื้องต้น</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>ตอบคำถามจาก knowledge base</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>draft email / report / presentation</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>รวมข้อมูลจากหลายระบบ</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>สร้าง campaign idea / mockup</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>ตรวจ data quality</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>วิเคราะห์ feedback ลูกค้า</li>
+            </ul>
+          </div>
+          <div class="card bad">
+            <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M18 6L6 18M6 6l12 12"/></svg>ยังไม่ควรให้ทำเองเต็มตัว</h4>
+            <ul class="list-check bad">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>อนุมัติสินเชื่อ</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>ตัดสินใจ high-impact กับลูกค้า</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>ส่งข้อมูลลับออกนอกองค์กร</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>แก้ production system</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>ตัดสินใจเชิงกฎหมาย/HR โดยไม่มีคนตรวจ</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>ส่งอีเมลภายนอกโดยไม่มี approval</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>ใช้ข้อมูลส่วนบุคคลโดยไม่มี control</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- 7 -->
+      <section id="guardrail">
+        <h2><span class="sec-num">7</span>กติกาความปลอดภัย (Guardrail) ตัวอย่างที่ใช้จริง</h2>
+        <ul class="list-check good">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Agent draft email ได้ แต่ส่งเองไม่ได้</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Agent วิเคราะห์ข้อมูลได้ แต่ต้องแสดง source</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Agent สรุป recommendation ได้ แต่คนต้องอนุมัติก่อนใช้กับลูกค้า</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Agent ดึงข้อมูลได้เฉพาะตามสิทธิ์ของผู้ใช้คนนั้น</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>ทุกการทำงานต้องมี log ย้อนดูได้</li>
+        </ul>
+        <div class="callout quote">"Agent ช่วยคิด ช่วยทำ ช่วยเตรียม — แต่เรื่องเสี่ยงสูงต้องมีคนอนุมัติ"</div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- 8 -->
+      <section id="safe-start">
+        <h2><span class="sec-num">8</span>เริ่มทดลองอย่างปลอดภัย</h2>
+        <p>การเริ่มออกแบบ Agent ไม่จำเป็นต้องใช้ข้อมูลจริงทันที ขั้นแรกให้ทำตามนี้ก่อน:</p>
+        <ul class="list-check good">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>อธิบายงานในระดับ process</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>ใช้ข้อมูลสมมติ</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>หลีกเลี่ยงชื่อลูกค้า</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>หลีกเลี่ยงข้อมูลพนักงาน</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>หลีกเลี่ยงตัวเลขหรือเอกสารภายในที่ยังไม่ได้รับอนุญาต</li>
+        </ul>
+
+        <div class="grid2">
+          <div class="card good">
+            <h4>ตัวอย่างที่ปลอดภัย</h4>
+            <p style="margin:0;font-style:italic;">"ฉันมีงานที่ต้องสรุปรายงานยอดขายทุกเช้า โดยต้องดึงข้อมูลจากหลายระบบ ช่วยออกแบบ Agent แบบง่ายๆ ให้หน่อย"</p>
+          </div>
+          <div class="card bad">
+            <h4>ตัวอย่างที่ไม่ควรทำ</h4>
+            <p style="margin:0;font-style:italic;">"นี่คือรายชื่อลูกค้าและยอดหนี้จริง ช่วยวิเคราะห์ให้หน่อย"</p>
+          </div>
+        </div>
+
+        <h3>Prompt Template สำหรับเริ่มต้น</h3>
+        <div class="prompt-box">ฉันมีงานที่ทำซ้ำบ่อยคือ: [ใส่งานของคุณ]
+
+ช่วยออกแบบ AI Agent แบบง่าย ๆ ให้หน่อย โดยตอบเป็น 4 ส่วน:
+
+1. เป้าหมายของ Agent คืออะไร
+2. ต้องใช้ข้อมูลหรือเครื่องมืออะไรบ้าง
+3. ผลลัพธ์ที่ควรส่งมอบคืออะไร
+4. จุดไหนที่คนควรตรวจหรืออนุมัติก่อน<button class="copy-btn" id="copyPrompt">คัดลอก</button></div>
+
+        <div class="callout warn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 1 21h22z"/><path d="M12 9v5M12 17h.01"/></svg>
+          <div>อย่าใส่ข้อมูลลับ ข้อมูลลูกค้า ข้อมูลพนักงาน หรือข้อมูลภายในที่องค์กรไม่ได้อนุญาต ลงใน AI สาธารณะ —
+          ถ้าจะใช้ข้อมูลจริง ต้องใช้เครื่องมือที่องค์กรอนุมัติ และทำตามนโยบายของ IT/Security เท่านั้น</div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- 9 -->
+      <section id="enterprise">
+        <h2><span class="sec-num">9</span>ตัวอย่าง Enterprise Agent เพิ่มเติม</h2>
+        <div class="grid3">
+          <div class="card ent-card">
+            <div class="tag">Operations</div>
+            <h4>Meeting Summary Agent</h4>
+            <div class="flowmini">เสียงประชุม → สรุปประเด็น + action item + owner + due date</div>
+            <div class="guardrail">⚠ คนตรวจก่อนส่งทั้งทีม</div>
+          </div>
+          <div class="card ent-card">
+            <div class="tag">Sales / Analytics</div>
+            <h4>Branch Performance Agent</h4>
+            <div class="flowmini">ข้อมูลยอดขายรายสาขา → หาสาขาผิดปกติ + อธิบายสาเหตุ + จัด priority</div>
+            <div class="guardrail">⚠ คนตรวจก่อนส่งทีม operation · ต้องแสดง source + confidence + ข้อจำกัดข้อมูล</div>
+          </div>
+          <div class="card ent-card">
+            <div class="tag">Marketing</div>
+            <h4>Creative Production Agent</h4>
+            <div class="flowmini">brief + brand guideline → แตกไอเดีย + generate mockup 3–5 แบบ</div>
+            <div class="guardrail">⚠ Marketing/Brand/Legal ตรวจก่อนใช้จริง</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- 10 -->
+      <section id="canvas">
+        <h2><span class="sec-num">10</span>Agent Canvas ฉบับเต็ม 7 ช่อง</h2>
+        <p>ในคลาสสดเราย่อเหลือ 4 ช่องภาษาคนเพื่อลดความรู้สึก "ตอบไม่ได้" — นี่คือฉบับเต็ม 7 ช่อง สำหรับคนที่พร้อมออกแบบละเอียดขึ้น</p>
+
+        <table class="canvas">
+          <tr><th>#</th><th>ช่อง</th><th>คำถาม</th></tr>
+          <tr><td>1</td><td>งาน (Goal)</td><td>งานที่อยากให้ Agent ช่วยคืออะไร?</td></tr>
+          <tr><td>2</td><td>ผู้ใช้</td><td>ใครคือผู้ใช้ Agent?</td></tr>
+          <tr><td>3</td><td>Input</td><td>Agent ต้องรับ Input อะไร?</td></tr>
+          <tr><td>4</td><td>ระบบ (Tool)</td><td>ต้องต่อข้อมูลหรือระบบอะไร?</td></tr>
+          <tr><td>5</td><td>Skill</td><td>Agent ต้องมี Skill อะไร?</td></tr>
+          <tr><td>6</td><td>Output</td><td>Output ที่ต้องการคืออะไร?</td></tr>
+          <tr><td>7</td><td>Approval</td><td>จุดไหนต้องให้คนอนุมัติ?</td></tr>
+        </table>
+
+        <h3>ตัวอย่าง Canvas ที่กรอกครบ — Daily Sales Insight Agent</h3>
+        <div class="canvas-board">
+          <div class="note a-goal"><div class="lbl">งาน (Goal)</div><div class="val">สรุปยอดขายรายวัน + หาสาขา performance ผิดปกติ</div></div>
+          <div class="note a-user"><div class="lbl">ผู้ใช้</div><div class="val">ผู้จัดการทีมขาย / ผู้บริหาร / ทีม Analytics</div></div>
+          <div class="note a-input"><div class="lbl">Input</div><div class="val">คำถามผู้บริหาร เช่น "เมื่อวานสาขาไหนยอดตกผิดปกติ เพราะอะไร"</div></div>
+          <div class="note a-tool"><div class="lbl">ระบบ (Tool)</div><div class="val">Sales database, Branch master, Target, Historical sales</div></div>
+          <div class="note a-skill"><div class="lbl">Skill</div><div class="val">Trend analysis, Anomaly detection, อธิบาย root cause, เขียน executive summary</div></div>
+          <div class="note a-output"><div class="lbl">Output</div><div class="val">รายงาน 1 หน้า: สาขาผิดปกติ + สาเหตุที่เป็นไปได้ + recommendation</div></div>
+          <div class="note a-approval"><div class="lbl">Approval</div><div class="val">Analyst ตรวจก่อนส่งผู้บริหาร</div></div>
+        </div>
+
+        <h3>ลองกรอกของคุณเอง แล้วสร้างเป็น Canvas</h3>
+        <p style="color:var(--muted);font-size:14px;">กรอก 7 ช่องด้านล่าง แล้วกดปุ่ม "สร้าง Canvas" — ระบบจะจัดหน้าให้เป็นบอร์ด Canvas ทันที (ไม่ถูกบันทึกไว้ในเครื่อง ถ้าจะเก็บให้ปริ้นหรือคัดลอกไปที่อื่น)</p>
+        <div class="card">
+          <div class="canvas-form">
+            <label>งาน (Goal)<textarea id="cf-goal" placeholder="งานที่อยากให้ Agent ช่วยคืออะไร?"></textarea></label>
+            <label>ผู้ใช้<textarea id="cf-user" placeholder="ใครคือผู้ใช้ Agent?"></textarea></label>
+            <label>Input<textarea id="cf-input" placeholder="Agent ต้องรับ Input อะไร?"></textarea></label>
+            <label>ระบบ (Tool)<textarea id="cf-tool" placeholder="ต้องต่อข้อมูลหรือระบบอะไร?"></textarea></label>
+            <label>Skill<textarea id="cf-skill" placeholder="Agent ต้องมี Skill อะไร?"></textarea></label>
+            <label>Output<textarea id="cf-output" placeholder="Output ที่ต้องการคืออะไร?"></textarea></label>
+            <label>Approval<textarea id="cf-approval" placeholder="จุดไหนต้องให้คนอนุมัติ?"></textarea></label>
+          </div>
+          <button class="btn-generate" id="genCanvas">สร้าง Canvas ของฉัน ↓</button>
+        </div>
+
+        <div class="canvas-board empty" id="myCanvasBoard">
+          <div class="note a-goal"><div class="lbl">งาน (Goal)</div><div class="val">—</div></div>
+          <div class="note a-user"><div class="lbl">ผู้ใช้</div><div class="val">—</div></div>
+          <div class="note a-input"><div class="lbl">Input</div><div class="val">—</div></div>
+          <div class="note a-tool"><div class="lbl">ระบบ (Tool)</div><div class="val">—</div></div>
+          <div class="note a-skill"><div class="lbl">Skill</div><div class="val">—</div></div>
+          <div class="note a-output"><div class="lbl">Output</div><div class="val">—</div></div>
+          <div class="note a-approval"><div class="lbl">Approval</div><div class="val">—</div></div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- 11 -->
+      <section id="glossary">
+        <h2><span class="sec-num">11</span>สรุปคำศัพท์ท้ายเล่ม</h2>
+        <div class="glossary-grid">
+          <div class="gterm"><b>Agent</b><span>คนที่รับเป้าหมาย → คิดวิธีเอง → แก้ปัญหาหน้างาน → รายงานกลับ</span></div>
+          <div class="gterm"><b>Tool</b><span>มือของ agent — สิทธิ์เข้าถึงระบบและเครื่องมือ</span></div>
+          <div class="gterm"><b>Skill</b><span>คู่มือ/SOP เฉพาะงานที่ agent หยิบอ่าน</span></div>
+          <div class="gterm"><b>MCP</b><span>มาตรฐานปลั๊กเชื่อม AI เข้ากับระบบต่างๆ</span></div>
+          <div class="gterm"><b>Harness</b><span>ตัวห่อที่คุมให้ agent ทำงานวนจนเสร็จ + คุมสิทธิ์ + เก็บ log</span></div>
+          <div class="gterm"><b>Guardrail</b><span>กติกาความปลอดภัย + จุดที่คนต้องอนุมัติ</span></div>
+          <div class="gterm"><b>Agentic AI</b><span>Agent หลายตัวทำงานร่วมกันเป็นทีม</span></div>
+          <div class="gterm"><b>Goal</b><span>เป้าหมายที่มอบให้ agent คิดวิธีเอง</span></div>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section id="takeaways">
+        <div class="poster">
+          <h2 style="display:block;">Key Takeaways — ฉบับติดผนัง</h2>
+          <ol>
+            <li>LLM ช่วยตอบจากสิ่งที่มี — Agent ใช้เครื่องมือทำงานแล้วกลับมารายงาน</li>
+            <li>Agent = สมอง + มือ + คู่มือ</li>
+            <li>ออกแบบ Agent = เขียน Job Description ไม่ใช่เขียนโค้ด</li>
+            <li>เรื่องเสี่ยง คนต้องอนุมัติก่อนเสมอ</li>
+            <li>งานที่เหมาะ = ซ้ำ + ใช้ข้อมูล + มีขั้นตอน + ต้องสรุป + มีเครื่องมือให้เรียก</li>
+            <li>ก้าวแรก: เอางานน่าเบื่อที่สุดของคุณ ไปพิมพ์ถาม AI ภายในสัปดาห์นี้</li>
+            <li>อย่าใส่ข้อมูลลับหรือข้อมูลลูกค้าลงใน AI สาธารณะ</li>
+          </ol>
+        </div>
+      </section>
+
+    </article>
+
+    <footer class="pagefoot">
+      <div class="credit">เรียบเรียงโดย Bobby Thaveewat Khanan · <a href="mailto:thaveewat.k@tidlor.com">thaveewat.k@tidlor.com</a></div>
+    </footer>
+  </main>
+</div>
+
+<div id="toTop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+
+<script>
+/* progress bar */
+function updateProgress(){
+  const h = document.documentElement;
+  const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+  document.getElementById('progress').style.width = (scrolled||0) + '%';
+  document.getElementById('toTop').classList.toggle('show', h.scrollTop > 400);
+}
+document.addEventListener('scroll', updateProgress);
+updateProgress();
+
+/* back to top */
+document.getElementById('toTop').addEventListener('click', ()=>globalThis.scrollTo({top:0, behavior:'smooth'}));
+
+/* print */
+document.getElementById('printBtn').addEventListener('click', ()=>globalThis.print());
+
+/* mobile toc toggle */
+const sidebar = document.getElementById('sidebar');
+document.getElementById('tocToggle').addEventListener('click', ()=>sidebar.classList.toggle('open'));
+sidebar.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>sidebar.classList.remove('open')));
+
+/* scrollspy */
+const links = Array.from(document.querySelectorAll('.sidebar a'));
+const sections = links.map(a=>document.querySelector(a.getAttribute('href')));
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    const i = sections.indexOf(entry.target);
+    if(i<0) return;
+    if(entry.isIntersecting){
+      links.forEach(l=>l.classList.remove('active'));
+      links[i].classList.add('active');
+    }
+  });
+}, { rootMargin:'-20% 0px -70% 0px', threshold:0 });
+sections.forEach(s=>{ if(s) io.observe(s); });
+
+/* generate my agent canvas */
+const genBtn = document.getElementById('genCanvas');
+if(genBtn){
+  genBtn.addEventListener('click', ()=>{
+    const board = document.getElementById('myCanvasBoard');
+    const fields = ['goal','user','input','tool','skill','output','approval'];
+    let hasValue = false;
+    fields.forEach(f=>{
+      const input = document.getElementById('cf-'+f);
+      const val = document.querySelector('#myCanvasBoard .a-'+f+' .val');
+      const text = input.value.trim();
+      if(text) hasValue = true;
+      val.textContent = text || '—';
+    });
+    board.classList.toggle('empty', !hasValue);
+    board.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+}
+
+/* copy prompt */
+document.getElementById('copyPrompt').addEventListener('click', (e)=>{
+  const text = "ฉันมีงานที่ทำซ้ำบ่อยคือ: [ใส่งานของคุณ]\n\nช่วยออกแบบ AI Agent แบบง่าย ๆ ให้หน่อย โดยตอบเป็น 4 ส่วน:\n\n1. เป้าหมายของ Agent คืออะไร\n2. ต้องใช้ข้อมูลหรือเครื่องมืออะไรบ้าง\n3. ผลลัพธ์ที่ควรส่งมอบคืออะไร\n4. จุดไหนที่คนควรตรวจหรืออนุมัติก่อน";
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=e.target; const old=btn.textContent;
+    btn.textContent='คัดลอกแล้ว!'; setTimeout(()=>btn.textContent=old, 1500);
+  }).catch(()=>{});
+});
+</script>
+</body>
+</html>
