@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="th" class="scroll-smooth">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tidlor AI Agent Blueprint Workshop</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Thai', 'sans-serif'],
+                    },
+                    colors: {
+                        tidlor: {
+                            navy: '#03162d',
+                            blue: '#063f7c',
+                            blue2: '#0879c8',
+                            red: '#df1f32',
+                            cyan: '#37d8ff',
+                            paper: '#f4f8fc',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 40px -15px rgba(0,0,0,0.05)',
+                        'glow': '0 0 20px rgba(55, 216, 255, 0.3)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: theme('colors.tidlor.paper'); }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Hide scrollbar for step indicator */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <div id="toast-container" class="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none"></div>
+
+    <header class="sticky top-0 z-50 bg-tidlor-navy/95 backdrop-blur-md text-white border-b border-white/10 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <a href="#" onclick="navigateTo('spark')" class="flex items-center gap-3 hover:opacity-80 transition group">
+                    <img src="image_3dcc15.png" class="h-11 w-auto rounded-xl shadow-[0_0_15px_rgba(223,31,50,0.15)] group-hover:shadow-[0_0_20px_rgba(55,216,255,0.3)] transition-shadow duration-300 bg-white" alt="Tidlor Logo">
+                </a>
+                <div class="hidden md:flex flex-col border-l border-white/20 pl-6">
+                    <span class="font-semibold tracking-wide text-sm" id="nav-title">Agent Spark</span>
+                    <span class="text-xs text-blue-200" id="nav-subtitle">ค้นหา AI Agent จากงานของคุณ</span>
+                </div>
+            </div>
+            <nav class="flex items-center gap-2 sm:gap-4">
+                <button onclick="navigateTo('spark')" id="btn-nav-spark" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-white/10 text-white">Agent Spark</button>
+                <button onclick="navigateTo('lab')" id="btn-nav-lab" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors text-blue-200 hover:bg-white/5 hover:text-white flex items-center transition-all">Blueprint Lab</button>
+                <button onclick="navigateTo('admin')" id="btn-nav-admin" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors text-blue-200 hover:bg-white/5 hover:text-white border border-white/10">สำหรับทีมโครงการ</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow flex flex-col relative w-full">
+        
+        <!-- ========================================== -->
+        <!-- ========================================== -->
+        <div id="view-spark" class="w-full">
+            <!-- Hero Section -->
+            <section class="relative bg-gradient-to-br from-tidlor-navy via-[#052855] to-[#041a38] pt-20 pb-32 overflow-hidden">
+                <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] [mask-image:linear-gradient(to_bottom,white,transparent)]"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="inline-block py-1 px-3 rounded-full bg-tidlor-cyan/10 text-tidlor-cyan text-xs font-bold tracking-widest mb-6 border border-tidlor-cyan/20">AI GANGS TALK · 7–10 นาที</span>
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+                            ถ้ามี AI มาช่วยงานคุณได้หนึ่งอย่าง<br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-tidlor-cyan to-blue-300">คุณอยากให้ช่วยอะไร?</span>
+                        </h1>
+                        <p class="text-lg text-blue-100/80 mb-10 max-w-lg">ไม่มีคำตอบผิด ไม่ต้องรู้เทคนิค และไม่ต้องเขียนโค้ด เพียงแค่แชร์ไอเดียจากงานที่คุณคุ้นเคยที่สุด</p>
+                        <button onclick="document.getElementById('spark-workshop').scrollIntoView({behavior:'smooth'})" class="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-tidlor-red border border-transparent rounded-xl hover:bg-red-700 hover:shadow-lg hover:-translate-y-1">
+                            เริ่มออกแบบ Agent ของฉัน
+                            <svg class="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                    <div class="hidden md:flex justify-center relative h-[300px] animate-float">
+                        <!-- Custom Abstract UI Graphic -->
+                        <div class="relative w-64 h-64 flex items-center justify-center">
+                            <div class="absolute inset-0 border-2 border-tidlor-cyan/30 rounded-full animate-pulse-slow"></div>
+                            <div class="absolute inset-4 border border-tidlor-cyan/20 rounded-full"></div>
+                            <div class="absolute inset-10 border border-dashed border-tidlor-cyan/40 rounded-full animate-[spin_20s_linear_infinite]"></div>
+                            
+                            <div class="absolute w-3 h-3 bg-tidlor-red rounded-full top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-[0_0_15px_#df1f32]"></div>
+                            <div class="absolute w-4 h-4 bg-tidlor-cyan rounded-full bottom-8 right-4 shadow-[0_0_15px_#37d8ff]"></div>
+                            
+                            <div class="relative z-10 w-24 h-24 bg-gradient-to-br from-tidlor-blue to-tidlor-navy rounded-2xl flex items-center justify-center shadow-glow border border-tidlor-cyan/30 transform rotate-12">
+                                <span class="text-3xl font-black text-white">AI</span>
+                            </div>
+                            
+                            <div class="absolute -bottom-10 right-0 bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 flex items-center gap-3 shadow-xl">
+                                <div class="w-10 h-10 bg-tidlor-cyan/20 rounded-full flex items-center justify-center text-xl">👤</div>
+                                <div>
+                                    <p class="text-white font-bold text-sm">คุณรู้จักงานดีที่สุด</p>
+                                    <p class="text-blue-200 text-xs">Human-in-the-loop</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="spark-workshop" class="max-w-4xl mx-auto px-4 sm:px-6 -mt-16 relative z-20 pb-24">
+                <div class="bg-white rounded-3xl shadow-soft border border-slate-100 overflow-hidden">
+                    <!-- Header -->
+                    <div class="bg-slate-50 border-b border-slate-100 p-6 sm:px-10 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div>
+                            <span id="spark-step-label" class="text-xs font-bold text-tidlor-blue2 tracking-wider uppercase">ขั้นที่ 1 จาก 6</span>
+                            <h2 id="spark-step-title" class="text-lg font-bold text-slate-800 mt-1">รู้จักกันเล็กน้อย</h2>
+                        </div>
+                        <div class="flex gap-2" id="spark-dots">
+                            <!-- Dots generated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-6 sm:p-10 min-h-[400px]">
+                        <form id="spark-form" onsubmit="event.preventDefault(); handleSparkNext();">
+                            <!-- Dynamic Content Container -->
+                            <div id="spark-content-area" class="space-y-6"></div>
+
+                            <!-- Navigation Buttons -->
+                            <div class="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center">
+                                <button type="button" id="spark-btn-prev" onclick="handleSparkPrev()" class="px-6 py-3 text-slate-500 font-medium hover:text-slate-800 hover:bg-slate-100 rounded-xl transition disabled:opacity-0 disabled:cursor-default">
+                                    &larr; ย้อนกลับ
+                                </button>
+                                <button type="submit" id="spark-btn-next" class="px-8 py-3 bg-tidlor-blue hover:bg-blue-800 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+                                    ถัดไป &rarr;
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- ========================================== -->
+        <div id="view-lab" class="hidden w-full">
+            <section class="bg-tidlor-navy pt-16 pb-24 border-b border-white/10">
+                <div class="max-w-7xl mx-auto px-4 text-center">
+                    <span class="inline-block py-1 px-3 rounded-full bg-tidlor-cyan/10 text-tidlor-cyan text-xs font-bold tracking-widest mb-4 border border-tidlor-cyan/20">WORKSHOP เชิงลึก</span>
+                    <h1 class="text-3xl md:text-5xl font-bold text-white mb-4">เปลี่ยนงานที่คุณรู้จัก ให้เป็น <span class="text-tidlor-cyan">AI Agent Blueprint</span></h1>
+                    <p class="text-blue-200 max-w-2xl mx-auto">ใช้เวลาประมาณ 12 นาที ไม่ต้องเขียนโค้ด และยังไม่ต้องเชื่อมระบบจริง</p>
+                </div>
+            </section>
+
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-20 pb-24">
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <!-- Sidebar Steps -->
+                    <aside class="w-full lg:w-72 flex-shrink-0">
+                        <div class="bg-white rounded-2xl shadow-soft border border-slate-100 p-6 sticky top-28">
+                            <h3 class="font-bold text-slate-800 mb-6">ความคืบหน้า</h3>
+                            <div class="space-y-1 relative" id="lab-steps-container">
+                                <!-- Steps generated by JS -->
+                            </div>
+                            
+                            <div class="mt-8 pt-6 border-t border-slate-100">
+                                <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                                    <h4 class="text-xs font-bold text-amber-800 uppercase mb-2">คำแนะนำเรื่องข้อมูล</h4>
+                                    <p class="text-xs text-amber-700 leading-relaxed">
+                                        รหัสพนักงาน หน่วยงาน และ Blueprint ของงาน <b>ไม่ควร</b> กรอกชื่อลูกค้า เลขบัญชี หรือข้อมูลลับทางธุรกิจ
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Main Form Area -->
+                    <div class="flex-grow">
+                        <div class="bg-white rounded-2xl shadow-soft border border-slate-100 overflow-hidden">
+                            <!-- Progress bar -->
+                            <div class="h-1.5 w-full bg-slate-100">
+                                <div id="lab-progress-bar" class="h-full bg-gradient-to-r from-tidlor-red to-tidlor-cyan transition-all duration-500 w-0"></div>
+                            </div>
+                            
+                            <div class="p-6 sm:p-10">
+                                <form id="lab-form" onsubmit="event.preventDefault(); handleLabNext();">
+                                    <div id="lab-content-area" class="space-y-6"></div>
+                                    
+                                    <div class="mt-10 pt-6 border-t border-slate-100 flex justify-between items-center">
+                                        <button type="button" id="lab-btn-prev" onclick="handleLabPrev()" class="px-6 py-3 text-slate-500 font-medium hover:text-slate-800 hover:bg-slate-100 rounded-xl transition disabled:opacity-0 disabled:cursor-default">
+                                            &larr; ย้อนกลับ
+                                        </button>
+                                        <button type="submit" id="lab-btn-next" class="px-8 py-3 bg-tidlor-blue hover:bg-blue-800 text-white font-bold rounded-xl shadow-md transition transform hover:-translate-y-0.5">
+                                            ถัดไป &rarr;
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- ========================================== -->
+        <div id="view-admin" class="hidden w-full bg-slate-50 min-h-screen">
+            <div class="max-w-6xl mx-auto px-4 py-12">
+                <!-- Login Panel (Shown initially) -->
+                <div id="admin-login-panel" class="max-w-md mx-auto bg-white rounded-2xl shadow-soft border border-slate-200 p-8">
+                    <div class="w-16 h-16 bg-tidlor-blue/10 text-tidlor-blue rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">เข้าสู่ระบบทีมโครงการ</h2>
+                    <p class="text-slate-500 text-sm mb-8">จัดการและดูข้อมูล AI Blueprint ขององค์กร (โหมดจำลอง)</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">อีเมล</label>
+                            <input type="email" id="admin-email" value="admin@tidlor.demo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-tidlor-blue2 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">รหัสผ่าน</label>
+                            <input type="password" id="admin-password" value="password" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-tidlor-blue2 outline-none transition">
+                        </div>
+                        <button onclick="simulateAdminLogin()" class="w-full mt-4 bg-tidlor-navy hover:bg-blue-900 text-white font-bold py-3 rounded-xl transition">
+                            เข้าสู่ระบบ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Panel (Hidden initially) -->
+                <div id="admin-dashboard-panel" class="hidden">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                        <div>
+                            <span class="text-xs font-bold text-tidlor-blue2 tracking-widest uppercase">Transformation Funnel</span>
+                            <h2 class="text-3xl font-bold text-slate-800 mt-1">Idea Dashboard</h2>
+                        </div>
+                        <button onclick="adminLogout()" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 font-medium transition">
+                            ออกจากระบบ
+                        </button>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="admin-stats">
+                        <!-- Filled by JS -->
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-6 flex flex-col sm:flex-row gap-4">
+                        <div class="flex-grow">
+                            <input type="text" id="admin-search" placeholder="ค้นหา รหัส, งาน, หน่วยงาน..." onkeyup="renderAdminCards()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-tidlor-blue2 outline-none transition">
+                        </div>
+                        <div class="w-full sm:w-48">
+                            <select id="admin-type" onchange="renderAdminCards()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-tidlor-blue2 outline-none transition appearance-none">
+                                <option value="all">ทั้งหมด</option>
+                                <option value="spark">Agent Spark</option>
+                                <option value="lab">Blueprint Lab</option>
+                                <option value="willing">คนสนใจทดลอง</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Cards Grid -->
+                    <div id="admin-cards" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION & FEATURE FLAGS
+        // ==========================================
+        const CONFIG = {
+            // เปลี่ยนค่าเป็น true เมื่อต้องการเปิดให้ใช้งาน Blueprint Lab ในช่วง Workshop
+            IS_LAB_ENABLED: false 
+        };
+
+        // ==========================================
+        // SPA ROUTING & STATE
+        // ==========================================
+        const views = {
+            spark: document.getElementById('view-spark'),
+            lab: document.getElementById('view-lab'),
+            admin: document.getElementById('view-admin'),
+        };
+        const navBtns = {
+            spark: document.getElementById('btn-nav-spark'),
+            lab: document.getElementById('btn-nav-lab'),
+            admin: document.getElementById('btn-nav-admin'),
+        };
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `px-6 py-3 rounded-full shadow-lg text-sm font-medium transform transition-all duration-300 translate-y-[-20px] opacity-0 flex items-center gap-2 ${
+                type === 'error' ? 'bg-tidlor-red text-white' : 'bg-slate-800 text-white'
+            }`;
+            toast.innerHTML = `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                ${message}
+            `;
+            container.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 10);
+
+            // Animate out and remove
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-[-20px]', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function initApp() {
+            // Setup disabled state for Blueprint Lab if feature flag is false
+            if (!CONFIG.IS_LAB_ENABLED) {
+                const labBtn = navBtns.lab;
+                labBtn.innerHTML = `Blueprint Lab <span class="ml-2 text-[10px] px-2 py-0.5 bg-slate-700/60 text-slate-300 rounded-full border border-slate-500/50 uppercase tracking-wider">Coming Soon</span>`;
+                labBtn.classList.remove('hover:bg-white/5', 'hover:text-white', 'text-blue-200');
+                labBtn.classList.add('text-slate-400', 'cursor-not-allowed', 'opacity-90');
+            }
+        }
+
+        function navigateTo(viewId) {
+            // Check Feature Flag for Lab
+            if (viewId === 'lab' && !CONFIG.IS_LAB_ENABLED) {
+                showToast('Blueprint Lab จะเปิดให้ใช้งานในช่วง Workshop ครับ');
+                return;
+            }
+
+            // Hide all views
+            Object.values(views).forEach(v => v.classList.add('hidden'));
+            // Reset nav buttons
+            Object.values(navBtns).forEach(btn => {
+                btn.className = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors text-blue-200 hover:bg-white/5 hover:text-white border border-transparent';
+            });
+            
+            // Show selected view
+            views[viewId].classList.remove('hidden');
+            // Highlight selected nav
+            if(navBtns[viewId]) {
+                navBtns[viewId].className = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-white/10 text-white border border-white/20 shadow-sm';
+            }
+
+            // Update Header text
+            const titleEl = document.getElementById('nav-title');
+            const subTitleEl = document.getElementById('nav-subtitle');
+            if(viewId === 'spark') {
+                titleEl.textContent = 'Agent Spark';
+                subTitleEl.textContent = 'ค้นหา AI Agent จากงานของคุณ';
+            } else if(viewId === 'lab') {
+                titleEl.textContent = 'Blueprint Lab';
+                subTitleEl.textContent = 'Workshop เชิงลึกสำหรับไอเดีย';
+            } else {
+                titleEl.textContent = 'Dashboard';
+            subTitleEl.textContent = 'สำหรับทีมโครงการ';
+        }
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Initialize App UI based on config
+    initApp();
+
+    // Initialize Mock Data in LocalStorage if not exists
+    if (!localStorage.getItem('tidlor_mock_data')) {
+            localStorage.setItem('tidlor_mock_data', JSON.stringify([]));
+        }
+
+        // ==========================================
+        // AGENT SPARK LOGIC
+        // ==========================================
+        let sparkStep = 0;
+        const sparkState = {};
+        
+        const sparkPages = [
+            { id: 'identity', title: 'รู้จักกันเล็กน้อย', icon: '👋' },
+            { id: 'job', title: 'งานที่อยากให้ช่วย', icon: '✨' },
+            { id: 'data', title: 'สิ่งที่ Agent ต้องดู', icon: '📥' },
+            { id: 'output', title: 'ผลงานที่อยากได้', icon: '📦' },
+            { id: 'gate', title: 'จุดที่คนต้องตรวจ', icon: '✋' },
+            { id: 'interest', title: 'ความสนใจร่วมทดลอง', icon: '🚀' },
+            { id: 'result', title: 'Agent ของฉัน', icon: '🎉' }
+        ];
+
+        const sparkTemplates = {
+            identity: `
+                <div class="flex flex-col items-center text-center mb-8">
+                    <div class="text-5xl mb-4">👋</div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800">Blueprint นี้เป็นของใคร?</h2>
+                    <p class="text-slate-500 mt-2">กรอกเพียงข้อมูลที่จำเป็น เพื่อให้ทีมติดต่อกลับได้หากไอเดียน่าสนใจ</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">รหัสพนักงาน <span class="text-tidlor-red">*</span></label>
+                        <input type="text" name="employee_id" required placeholder="เช่น 123456" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-tidlor-blue2 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">หน่วยงาน <span class="text-tidlor-red">*</span></label>
+                        <select name="department" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-tidlor-blue2 outline-none appearance-none">
+                            <option value="">เลือกหน่วยงาน</option>
+                            <option>Branch / Sales</option><option>Operations</option>
+                            <option>Credit</option><option>Collection</option>
+                            <option>Finance / Accounting</option><option>IT / Digital</option>
+                            <option>อื่น ๆ</option>
+                        </select>
+                    </div>
+                </div>
+                <label class="flex items-start gap-3 mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl cursor-pointer hover:bg-blue-100/50 transition">
+                    <input type="checkbox" name="consent" required class="mt-1 w-4 h-4 text-tidlor-blue rounded focus:ring-tidlor-blue2">
+                    <span class="text-sm text-slate-700 leading-relaxed">ฉันจะไม่กรอกชื่อลูกค้า เลขบัญชี หรือข้อมูลลับ และยินยอมให้ทีมโครงการติดต่อกลับเกี่ยวกับไอเดียนี้</span>
+                </label>
+            `,
+            job: `
+                <div class="flex flex-col items-center text-center mb-8">
+                    <div class="text-5xl mb-4">✨</div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800">งานอะไรที่คุณอยากให้ AI ช่วย?</h2>
+                    <p class="text-slate-500 mt-2">นึกถึงงานที่ทำบ่อย ใช้เวลา หรือถ้ามีผู้ช่วยมารับไปแล้วคุณจะดีใจที่สุด</p>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-4 justify-center">
+                    <button type="button" onclick="setJobText('สรุปประชุมและติดตาม Action')" class="px-3 py-1.5 bg-slate-100 hover:bg-tidlor-blue/10 text-tidlor-blue text-sm rounded-lg font-medium transition">สรุปประชุม</button>
+                    <button type="button" onclick="setJobText('รวบรวมข้อมูลและทำรายงานประจำ')" class="px-3 py-1.5 bg-slate-100 hover:bg-tidlor-blue/10 text-tidlor-blue text-sm rounded-lg font-medium transition">ทำรายงาน</button>
+                    <button type="button" onclick="setJobText('ตรวจเอกสารและบอกสิ่งที่ขาด')" class="px-3 py-1.5 bg-slate-100 hover:bg-tidlor-blue/10 text-tidlor-blue text-sm rounded-lg font-medium transition">ตรวจเอกสาร</button>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">งานที่อยากให้ช่วย <span class="text-tidlor-red">*</span></label>
+                    <textarea name="job_to_be_done" required rows="4" placeholder="เช่น ทุกเช้าต้องรวบรวมยอด งานค้าง และเรื่องผิดปกติจากหลายที่" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-tidlor-blue2 outline-none resize-none"></textarea>
+                </div>
+            `,
+            data: `
+                <div class="flex flex-col items-center text-center mb-8">
+                    <div class="text-5xl mb-4">📥</div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800">Agent ต้องดูอะไรจึงจะทำงานได้?</h2>
+                    <p class="text-slate-500 mt-2">ไม่ต้องรู้วิธีเชื่อมระบบ แค่บอกว่าปกติคุณต้องเปิดดูอะไรบ้าง</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">ข้อมูลหรือสิ่งที่ต้องดู <span class="text-tidlor-red">*</span></label>
+                    <textarea name="data_needed" required rows="4" placeholder="เช่น ยอดเมื่อวาน เป้าหมาย งานค้าง อีเมล และเรื่องผิดปกติ" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-tidlor-blue2 outline-none resize-none"></textarea>
+                </div>
+                <div class="mt-4 p-4 bg-slate-50 rounded-xl flex gap-3 text-sm text-slate-600">
+                    <span>💡</span><span>เขียนชื่อข้อมูลได้เลย ไม่จำเป็นต้องรู้ว่าใช้ API หรือเครื่องมือเทคนิคอะไร</span>
+                </div>
+            `,
+            output: `
+                <div class="flex flex-col items-center text-center mb-8">
+                    <div class="text-5xl mb-4">📦</div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800">คุณอยากได้อะไรกลับมา?</h2>
+                    <p class="text-slate-500 mt-2">อธิบายผลงานที่อยากได้รับ เหมือนกำลังบอกผู้ช่วยคนใหม่</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">ผลงานที่ต้องการ <span class="text-tidlor-red">*</span></label>
+                    <textarea name="output_definition" required rows="4" placeholder="เช่น Brief สั้นหนึ่งหน้า บอก 3 เรื่องสำคัญ สิ่งผิดปกติ และสิ่งที่ต้องทำวันนี้" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-tidlor-blue2 outline-none resize-none"></textarea>
+                </div>
+            `,
+            gate: `
+                <div class="flex flex-col items-center text-center mb-8">
+                    <div class="text-5xl mb-4">✋</div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800">ก่อนนำไปใช้จริง คุณอยากตรวจอะไร?</h2>
+                    <p class="text-slate-500 mt-2">Agent ช่วยเตรียมงานได้ แต่คนยังเป็นเจ้าของการตัดสินใจ</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">จุดที่คนต้องตรวจ หรือสิ่งที่ Agent ห้ามทำเอง <span class="text-tidlor-red">*</span></label>
+                    <textarea name="human_gate" required rows="4" placeholder="เช่น ให้ AI สรุปได้ แต่ฉันต้องตรวจตัวเลขก่อนส่ง และ AI ห้ามส่งเอง" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-tidlor-blue2 outline-none resize-none"></textarea>
+                </div>
+            `,
+            interest: `
+                <div class="flex flex-col items-center text-center mb-8">
+                    <div class="text-5xl mb-4">🚀</div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800">สนใจนำไอเดียไปทดลองไหม?</h2>
+                    <p class="text-slate-500 mt-2">ช่วยให้เรารู้ว่าจะสนับสนุนคุณอย่างไร ไม่มีผลต่อการประเมินงาน</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label class="relative cursor-pointer group">
+                        <input type="radio" name="hero_interest" value="lead" required class="peer sr-only">
+                        <div class="h-full p-5 border-2 border-slate-200 rounded-2xl peer-checked:border-tidlor-blue2 peer-checked:bg-blue-50 hover:bg-slate-50 transition">
+                            <div class="font-bold text-slate-800 mb-1">สนใจ อยากร่วมทดลอง</div>
+                            <div class="text-xs text-slate-500">พร้อมเป็นเจ้าของไอเดียและเรียนรู้ไปกับทีม</div>
+                        </div>
+                    </label>
+                    <label class="relative cursor-pointer group">
+                        <input type="radio" name="hero_interest" value="supported" class="peer sr-only">
+                        <div class="h-full p-5 border-2 border-slate-200 rounded-2xl peer-checked:border-tidlor-blue2 peer-checked:bg-blue-50 hover:bg-slate-50 transition">
+                            <div class="font-bold text-slate-800 mb-1">สนใจ แต่อยากมีทีมช่วย</div>
+                            <div class="text-xs text-slate-500">รู้จักงานดี แต่ต้องการทีมเทคนิคช่วยทำ</div>
+                        </div>
+                    </label>
+                    <label class="relative cursor-pointer group">
+                        <input type="radio" name="hero_interest" value="learn" class="peer sr-only">
+                        <div class="h-full p-5 border-2 border-slate-200 rounded-2xl peer-checked:border-tidlor-blue2 peer-checked:bg-blue-50 hover:bg-slate-50 transition">
+                            <div class="font-bold text-slate-800 mb-1">ขอเรียนรู้เพิ่มเติมก่อน</div>
+                            <div class="text-xs text-slate-500">อยากเข้าใจและเห็นตัวอย่างเพิ่ม</div>
+                        </div>
+                    </label>
+                    <label class="relative cursor-pointer group">
+                        <input type="radio" name="hero_interest" value="unsure" class="peer sr-only">
+                        <div class="h-full p-5 border-2 border-slate-200 rounded-2xl peer-checked:border-tidlor-blue2 peer-checked:bg-blue-50 hover:bg-slate-50 transition">
+                            <div class="font-bold text-slate-800 mb-1">ยังไม่แน่ใจ</div>
+                            <div class="text-xs text-slate-500">ขอเก็บไอเดียไว้ก่อน</div>
+                        </div>
+                    </label>
+                </div>
+            `,
+            result: `
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-tidlor-blue to-tidlor-cyan text-white rounded-3xl flex items-center justify-center text-3xl font-black shadow-lg mb-6">AI</div>
+                    <span class="text-xs font-bold text-tidlor-cyan tracking-widest uppercase mb-2">Your Agent Spark</span>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-8" id="res-agent-name">ผู้ช่วยของฉัน</h2>
+                </div>
+                
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 mb-8 relative">
+                    <div class="absolute left-[39px] top-10 bottom-10 w-0.5 bg-slate-200 z-0"></div>
+                    
+                    <div class="flex gap-4 relative z-10">
+                        <div class="w-8 h-8 rounded-full bg-white border-2 border-tidlor-cyan flex items-center justify-center text-xs shadow-sm mt-1 flex-shrink-0">1</div>
+                        <div>
+                            <div class="text-xs text-slate-500 font-bold mb-1 uppercase tracking-wider">เมื่อได้รับข้อมูล</div>
+                            <div class="text-slate-800 bg-white p-3 rounded-xl border border-slate-100 shadow-sm" id="res-data"></div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 relative z-10">
+                        <div class="w-8 h-8 rounded-full bg-white border-2 border-tidlor-blue flex items-center justify-center text-xs shadow-sm mt-1 flex-shrink-0">2</div>
+                        <div>
+                            <div class="text-xs text-slate-500 font-bold mb-1 uppercase tracking-wider">Agent ช่วยทำงาน</div>
+                            <div class="text-slate-800 bg-white p-3 rounded-xl border border-slate-100 shadow-sm" id="res-job"></div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 relative z-10">
+                        <div class="w-8 h-8 rounded-full bg-white border-2 border-tidlor-red flex items-center justify-center text-xs shadow-sm mt-1 flex-shrink-0">3</div>
+                        <div>
+                            <div class="text-xs text-slate-500 font-bold mb-1 uppercase tracking-wider">และส่งมอบ</div>
+                            <div class="text-slate-800 bg-white p-3 rounded-xl border border-slate-100 shadow-sm" id="res-output"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl flex gap-4 items-center">
+                    <div class="text-2xl">👤</div>
+                    <div>
+                        <div class="text-xs text-amber-700 font-bold mb-1 uppercase">จุดตรวจของมนุษย์ (Human Gate)</div>
+                        <div class="text-amber-900 text-sm font-medium" id="res-gate"></div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+                     <p id="spark-status-msg" class="text-sm font-medium mb-4 text-tidlor-blue"></p>
+                </div>
+            `
+        };
+
+        function setJobText(text) {
+            document.querySelector('[name="job_to_be_done"]').value = text;
+        }
+
+        function renderSparkStep() {
+            const page = sparkPages[sparkStep];
+            
+            // Render Dots
+            let dotsHtml = '';
+            for(let i=0; i<6; i++) {
+                if(i === sparkStep) dotsHtml += `<div class="w-3 h-3 rounded-full bg-tidlor-blue transform scale-125 transition"></div>`;
+                else if (i < sparkStep) dotsHtml += `<div class="w-2.5 h-2.5 rounded-full bg-tidlor-blue2/50 transition"></div>`;
+                else dotsHtml += `<div class="w-2.5 h-2.5 rounded-full bg-slate-200 transition"></div>`;
+            }
+            document.getElementById('spark-dots').innerHTML = sparkStep === 6 ? '' : dotsHtml;
+            
+            document.getElementById('spark-step-label').textContent = sparkStep === 6 ? 'เสร็จสมบูรณ์' : `ขั้นที่ ${sparkStep + 1} จาก 6`;
+            document.getElementById('spark-step-title').textContent = page.title;
+            
+            // Render Content
+            const contentArea = document.getElementById('spark-content-area');
+            contentArea.innerHTML = sparkTemplates[page.id];
+
+            // Setup buttons
+            const btnPrev = document.getElementById('spark-btn-prev');
+            const btnNext = document.getElementById('spark-btn-next');
+            
+            if(sparkStep === 0) btnPrev.classList.add('hidden');
+            else btnPrev.classList.remove('hidden');
+
+            if (sparkStep === 5) {
+                btnNext.textContent = 'สร้าง Agent ของฉัน ✨';
+                btnNext.classList.remove('bg-tidlor-blue');
+                btnNext.classList.add('bg-gradient-to-r', 'from-tidlor-blue', 'to-tidlor-cyan');
+            } else if (sparkStep === 6) {
+                btnPrev.onclick = () => { sparkStep = 5; renderSparkStep(); };
+                btnPrev.textContent = '← กลับไปแก้ไข';
+                btnNext.type = 'button';
+                btnNext.textContent = 'ส่งไอเดียให้องค์กร';
+                btnNext.onclick = submitSpark;
+                btnNext.classList.add('bg-tidlor-red', 'hover:bg-red-700');
+                
+                // Fill data for result view
+                document.getElementById('res-agent-name').textContent = sparkState.job_to_be_done ? sparkState.job_to_be_done.substring(0, 40) + '...' : 'ผู้ช่วยของฉัน';
+                document.getElementById('res-data').textContent = sparkState.data_needed || '-';
+                document.getElementById('res-job').textContent = sparkState.job_to_be_done || '-';
+                document.getElementById('res-output').textContent = sparkState.output_definition || '-';
+                document.getElementById('res-gate').textContent = sparkState.human_gate || '-';
+            } else {
+                btnNext.type = 'submit';
+                btnNext.textContent = 'ถัดไป →';
+                btnNext.className = 'px-8 py-3 bg-tidlor-blue hover:bg-blue-800 text-white font-bold rounded-xl shadow-md transition transform hover:-translate-y-0.5';
+            }
+
+            // Restore values
+            const form = document.getElementById('spark-form');
+            Object.keys(sparkState).forEach(key => {
+                const el = form.elements[key];
+                if(el) {
+                    if (el.type === 'checkbox') el.checked = sparkState[key];
+                    else if (el.type === 'radio' && el.length) {
+                        for(let i=0; i<el.length; i++) {
+                            if(el[i].value === sparkState[key]) el[i].checked = true;
+                        }
+                    } else el.value = sparkState[key];
+                }
+            });
+        }
+
+        function saveSparkState() {
+            const form = document.getElementById('spark-form');
+            const formData = new FormData(form);
+            for (let [key, value] of formData.entries()) {
+                if (form.elements[key] && form.elements[key].type === 'checkbox') {
+                    sparkState[key] = form.elements[key].checked;
+                } else {
+                    sparkState[key] = value;
+                }
+            }
+        }
+
+        function handleSparkNext() {
+            const form = document.getElementById('spark-form');
+            if(!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            saveSparkState();
+            if(sparkStep < 6) sparkStep++;
+            renderSparkStep();
+        }
+
+        function handleSparkPrev() {
+            saveSparkState();
+            if(sparkStep > 0) sparkStep--;
+            renderSparkStep();
+        }
+
+        function submitSpark() {
+            const btn = document.getElementById('spark-btn-next');
+            const msg = document.getElementById('spark-status-msg');
+            btn.disabled = true;
+            btn.innerHTML = 'กำลังส่งข้อมูล...';
+            
+            setTimeout(() => {
+                const newRecord = {
+                    ...sparkState,
+                    id: Date.now(),
+                    created_at: new Date().toISOString(),
+                    submission_type: 'spark'
+                };
+                let data = JSON.parse(localStorage.getItem('tidlor_mock_data'));
+                data.push(newRecord);
+                localStorage.setItem('tidlor_mock_data', JSON.stringify(data));
+
+                msg.textContent = 'ส่งไอเดียสำเร็จ! ขอบคุณที่ร่วมสร้างอนาคตไปกับเรา';
+                msg.className = 'text-sm font-bold mt-4 text-green-600 bg-green-50 p-4 rounded-xl';
+                btn.style.display = 'none';
+                document.getElementById('spark-btn-prev').style.display = 'none';
+            }, 800);
+        }
+
+        // Initialize Spark
+        renderSparkStep();
+
+
+        // ==========================================
+        // BLUEPRINT LAB LOGIC
+        // ==========================================
+        let labStep = 0;
+        const labState = { workflow_steps: ['', '', ''] };
+        
+        const labDefs = [
+            { id: 'identity', title: 'ข้อมูลเบื้องต้น', icon: '1' },
+            { id: 'mission', title: 'Mission', icon: '2' },
+            { id: 'skill', title: 'Skill & Workflow', icon: '3' },
+            { id: 'tools', title: 'Data & Tools', icon: '4' },
+            { id: 'guardrails', title: 'Guardrails', icon: '5' },
+            { id: 'result', title: 'Blueprint ของคุณ', icon: '✓' }
+        ];
+
+        function renderLabSteps() {
+            const container = document.getElementById('lab-steps-container');
+            let html = '';
+            labDefs.forEach((d, i) => {
+                const isActive = i === labStep;
+                const isDone = i < labStep;
+                let colorCls = isActive ? 'text-tidlor-blue font-bold' : (isDone ? 'text-green-600 font-medium' : 'text-slate-400');
+                let iconCls = isActive ? 'bg-tidlor-blue text-white shadow-md' : (isDone ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-400');
+                
+                html += `
+                    <div class="flex items-center gap-4 py-3 relative z-10">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${iconCls}">
+                            ${isDone ? '✓' : d.icon}
+                        </div>
+                        <span class="text-sm transition-colors ${colorCls}">${d.title}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            
+            // Progress Bar
+            document.getElementById('lab-progress-bar').style.width = `${((labStep + 1) / labDefs.length) * 100}%`;
+        }
+
+        // Extremely simplified templates for the lab to fit in one file elegantly
+        const labTemplates = {
+            identity: `
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">เจ้าของ Blueprint</h2>
+                <p class="text-slate-500 mb-6">ใช้สำหรับติดต่อกลับเมื่อไอเดียมีความพร้อม</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div><label class="block text-sm font-semibold mb-1">รหัสพนักงาน *</label><input type="text" name="employee_id" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-tidlor-blue2"></div>
+                    <div><label class="block text-sm font-semibold mb-1">หน่วยงาน *</label><input type="text" name="department" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-tidlor-blue2"></div>
+                    <div class="md:col-span-2"><label class="block text-sm font-semibold mb-1">บทบาท/ลักษณะงาน *</label><input type="text" name="role" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-tidlor-blue2"></div>
+                </div>
+            `,
+            mission: `
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Mission (เป้าหมาย)</h2>
+                <p class="text-slate-500 mb-6">เลือกงานเล็กหนึ่งงานที่ทำซ้ำและมีจุดเริ่ม-จบชัดเจน</p>
+                <div class="space-y-5">
+                    <div><label class="block text-sm font-semibold mb-1">ตั้งชื่อ Agent *</label><input type="text" name="agent_name" required placeholder="เช่น Morning Report Agent" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-tidlor-blue2"></div>
+                    <div><label class="block text-sm font-semibold mb-1">งานที่มอบหมาย *</label><textarea name="job_to_be_done" required rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-tidlor-blue2 resize-none"></textarea></div>
+                    <div><label class="block text-sm font-semibold mb-1">คุณค่า / ปัญหาที่แก้ *</label><textarea name="pain_value" required rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 outline-none focus:border-tidlor-blue2 resize-none"></textarea></div>
+                </div>
+            `,
+            skill: `
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Skill (วิธีทำงาน)</h2>
+                <p class="text-slate-500 mb-6">เขียนขั้นตอนสำคัญ 3 ขั้นตอน</p>
+                <div class="space-y-4 mb-6">
+                    <div class="flex gap-3"><div class="pt-2 font-bold text-slate-400">1.</div><input type="text" name="workflow_step_0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none"></div>
+                    <div class="flex gap-3"><div class="pt-2 font-bold text-slate-400">2.</div><input type="text" name="workflow_step_1" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none"></div>
+                    <div class="flex gap-3"><div class="pt-2 font-bold text-slate-400">3.</div><input type="text" name="workflow_step_2" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none"></div>
+                </div>
+                <div><label class="block text-sm font-semibold mb-1">ถ้าผิดปกติ ให้ทำอย่างไร? *</label><textarea name="exception_handling" required rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-tidlor-blue2 resize-none"></textarea></div>
+            `,
+            tools: `
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Data & Tools</h2>
+                <div class="space-y-5">
+                    <div><label class="block text-sm font-semibold mb-1">ข้อมูลที่ต้องใช้ *</label><textarea name="data_needed" required rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-tidlor-blue2 resize-none"></textarea></div>
+                    <div><label class="block text-sm font-semibold mb-1">ระบบ/ไฟล์ที่เกี่ยวข้อง *</label><textarea name="tools_needed" required rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-tidlor-blue2 resize-none"></textarea></div>
+                    <div><label class="block text-sm font-semibold mb-1">ผลงานหน้าตาอย่างไร (Output) *</label><textarea name="output_definition" required rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-tidlor-blue2 resize-none"></textarea></div>
+                </div>
+            `,
+            guardrails: `
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Guardrails (กติกา)</h2>
+                <div class="space-y-5">
+                    <div><label class="block text-sm font-semibold mb-1">สิ่งที่ Agent ทำเองได้ *</label><input type="text" name="can_do" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none"></div>
+                    <div><label class="block text-sm font-semibold mb-1 text-tidlor-red">สิ่งที่ Agent ห้ามทำเด็ดขาด *</label><input type="text" name="cannot_do" required class="w-full border-red-200 bg-red-50 rounded-xl px-4 py-2 outline-none"></div>
+                    <div><label class="block text-sm font-semibold mb-1 text-amber-600">จุดที่คนต้องตรวจ (Human Gate) *</label><input type="text" name="human_gate" required class="w-full bg-amber-50 border-amber-200 rounded-xl px-4 py-2 outline-none"></div>
+                    
+                    <div class="pt-4 border-t border-slate-100">
+                        <label class="block text-sm font-semibold mb-3">ระดับความเสี่ยงหากผิดพลาด *</label>
+                        <div class="flex gap-4">
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="risk_level" value="low" required class="peer sr-only"><div class="text-center p-3 border rounded-xl peer-checked:border-green-500 peer-checked:bg-green-50">ต่ำ</div></label>
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="risk_level" value="medium" class="peer sr-only"><div class="text-center p-3 border rounded-xl peer-checked:border-amber-500 peer-checked:bg-amber-50">กลาง</div></label>
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="risk_level" value="high" class="peer sr-only"><div class="text-center p-3 border rounded-xl peer-checked:border-red-500 peer-checked:bg-red-50">สูง</div></label>
+                        </div>
+                    </div>
+                </div>
+            `,
+            result: `
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 bg-green-100 text-green-600 rounded-full mb-4">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-800">Blueprint พร้อมแล้ว!</h2>
+                    <p class="text-slate-500 mt-2">ไอเดียของคุณมีความครบถ้วนและพร้อมนำไปวิเคราะห์ต่อ</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 mb-6">
+                    <h3 class="text-lg font-bold text-tidlor-blue mb-1" id="lab-res-name"></h3>
+                    <p class="text-slate-600 text-sm mb-4" id="lab-res-job"></p>
+                    <div class="grid grid-cols-2 gap-4 text-sm mt-4 pt-4 border-t border-slate-200">
+                        <div><span class="block text-slate-400 text-xs">Risk Level</span><span class="font-semibold" id="lab-res-risk"></span></div>
+                        <div><span class="block text-slate-400 text-xs">Department</span><span class="font-semibold" id="lab-res-dept"></span></div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <p id="lab-status-msg" class="text-sm font-medium mb-4 text-tidlor-blue"></p>
+                </div>
+            `
+        };
+
+        function renderLabStep() {
+            renderLabSteps();
+            const page = labDefs[labStep];
+            document.getElementById('lab-content-area').innerHTML = labTemplates[page.id];
+
+            const btnPrev = document.getElementById('lab-btn-prev');
+            const btnNext = document.getElementById('lab-btn-next');
+            
+            btnPrev.classList.toggle('hidden', labStep === 0);
+
+            if (labStep === 4) {
+                btnNext.textContent = 'สร้าง Blueprint';
+                btnNext.classList.replace('bg-tidlor-blue', 'bg-tidlor-red');
+            } else if (labStep === 5) {
+                btnPrev.textContent = '← กลับไปแก้ไข';
+                btnNext.type = 'button';
+                btnNext.textContent = 'ส่งเข้าส่วนกลาง';
+                btnNext.onclick = submitLab;
+                
+                // Set result data
+                document.getElementById('lab-res-name').textContent = labState.agent_name;
+                document.getElementById('lab-res-job').textContent = labState.job_to_be_done;
+                document.getElementById('lab-res-risk').textContent = labState.risk_level?.toUpperCase();
+                document.getElementById('lab-res-dept').textContent = labState.department;
+            } else {
+                btnNext.type = 'submit';
+                btnNext.textContent = 'ถัดไป →';
+                btnNext.className = 'px-8 py-3 bg-tidlor-blue hover:bg-blue-800 text-white font-bold rounded-xl shadow-md transition transform hover:-translate-y-0.5';
+            }
+
+            // Restore state
+            const form = document.getElementById('lab-form');
+            Object.keys(labState).forEach(key => {
+                const el = form.elements[key];
+                if(el) {
+                    if (el.type === 'radio' && el.length) {
+                        for(let i=0; i<el.length; i++) {
+                            if(el[i].value === labState[key]) el[i].checked = true;
+                        }
+                    } else el.value = labState[key];
+                }
+            });
+        }
+
+        function saveLabState() {
+            const form = document.getElementById('lab-form');
+            const formData = new FormData(form);
+            for (let [key, value] of formData.entries()) {
+                labState[key] = value;
+            }
+        }
+
+        function handleLabNext() {
+            const form = document.getElementById('lab-form');
+            if(!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            saveLabState();
+            if(labStep < 5) labStep++;
+            renderLabStep();
+        }
+
+        function handleLabPrev() {
+            saveLabState();
+            if(labStep > 0) labStep--;
+            renderLabStep();
+        }
+
+        function submitLab() {
+            const btn = document.getElementById('lab-btn-next');
+            const msg = document.getElementById('lab-status-msg');
+            btn.disabled = true;
+            btn.innerHTML = 'กำลังบันทึก...';
+            
+            setTimeout(() => {
+                const newRecord = {
+                    ...labState,
+                    id: Date.now(),
+                    created_at: new Date().toISOString(),
+                    submission_type: 'lab'
+                };
+                let data = JSON.parse(localStorage.getItem('tidlor_mock_data'));
+                data.push(newRecord);
+                localStorage.setItem('tidlor_mock_data', JSON.stringify(data));
+
+                msg.textContent = 'บันทึก Blueprint สำเร็จ! ข้อมูลถูกส่งไปยังทีมโครงการแล้ว';
+                msg.className = 'text-sm font-bold mt-4 text-green-600 bg-green-50 p-4 rounded-xl';
+                btn.style.display = 'none';
+            }, 800);
+        }
+
+        renderLabStep();
+
+
+        // ==========================================
+        // ADMIN DASHBOARD LOGIC
+        // ==========================================
+        function simulateAdminLogin() {
+            const btn = document.querySelector('#admin-login-panel button');
+            btn.textContent = 'กำลังตรวจสอบ...';
+            setTimeout(() => {
+                document.getElementById('admin-login-panel').classList.add('hidden');
+                document.getElementById('admin-dashboard-panel').classList.remove('hidden');
+                renderAdminCards();
+            }, 600);
+        }
+
+        function adminLogout() {
+            document.getElementById('admin-dashboard-panel').classList.add('hidden');
+            document.getElementById('admin-login-panel').classList.remove('hidden');
+            document.querySelector('#admin-login-panel button').textContent = 'เข้าสู่ระบบ';
+        }
+
+        function renderAdminCards() {
+            const q = document.getElementById('admin-search').value.toLowerCase();
+            const type = document.getElementById('admin-type').value;
+            let rows = JSON.parse(localStorage.getItem('tidlor_mock_data')) || [];
+
+            // Generate some mock data if empty for demonstration
+            if (rows.length === 0) {
+                 rows = [
+                     { id: 1, submission_type: 'spark', department: 'Branch', job_to_be_done: 'สรุปยอดขายรายวัน', created_at: new Date().toISOString(), hero_interest: 'lead' },
+                     { id: 2, submission_type: 'lab', department: 'IT', agent_name: 'Server Monitor', job_to_be_done: 'ตรวจเช็คระบบ', created_at: new Date().toISOString(), hero_interest: 'supported' }
+                 ];
+                 localStorage.setItem('tidlor_mock_data', JSON.stringify(rows));
+            }
+
+            // Calculate stats
+            const total = rows.length;
+            const labs = rows.filter(r => r.submission_type === 'lab').length;
+            const willing = rows.filter(r => ['lead', 'supported'].includes(r.hero_interest)).length;
+
+            document.getElementById('admin-stats').innerHTML = `
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="text-4xl font-black text-tidlor-navy">${total}</div>
+                    <div class="text-sm text-slate-500 mt-1 font-medium">ไอเดียทั้งหมด (Ideas)</div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="text-4xl font-black text-tidlor-blue">${willing}</div>
+                    <div class="text-sm text-slate-500 mt-1 font-medium">คนสนใจไปต่อ (Willing)</div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="text-4xl font-black text-tidlor-cyan">${labs}</div>
+                    <div class="text-sm text-slate-500 mt-1 font-medium">Blueprint Labs (Detailed)</div>
+                </div>
+            `;
+
+            // Filter
+            let filtered = rows.filter(x => {
+                const matchQ = JSON.stringify(x).toLowerCase().includes(q);
+                const matchType = type === 'all' || x.submission_type === type || (type === 'willing' && ['lead', 'supported'].includes(x.hero_interest));
+                return matchQ && matchType;
+            });
+
+            // Sort by latest
+            filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+            // Render
+            const container = document.getElementById('admin-cards');
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400">ไม่พบข้อมูลที่ค้นหา</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(x => {
+                const isSpark = x.submission_type === 'spark';
+                const tagColor = isSpark ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700';
+                const tagName = isSpark ? 'SPARK' : 'LAB';
+                const name = x.agent_name || 'Agent Spark Idea';
+                const date = new Date(x.created_at).toLocaleDateString('th-TH');
+
+                return `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-2 h-full ${isSpark ? 'bg-indigo-500' : 'bg-emerald-500'}"></div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="px-2.5 py-1 text-xs font-bold rounded-lg ${tagColor}">${tagName}</span>
+                            <span class="text-xs text-slate-400">${date}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-tidlor-blue transition">${name}</h3>
+                        <p class="text-sm text-slate-600 line-clamp-2 mb-4">${x.job_to_be_done}</p>
+                        
+                        <div class="pt-4 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
+                            <span class="font-medium bg-slate-100 px-2 py-1 rounded">${x.department || 'ไม่ระบุหน่วยงาน'}</span>
+                            <span class="font-bold ${['lead','supported'].includes(x.hero_interest) ? 'text-tidlor-red' : ''}">
+                                ${x.hero_interest === 'lead' ? '🔥 พร้อมลุย' : (x.hero_interest ? 'สนใจ' : '')}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+    </script>
+</body>
+</html>
