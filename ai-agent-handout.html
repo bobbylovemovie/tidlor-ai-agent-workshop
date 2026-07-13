@@ -241,6 +241,7 @@ table.canvas td:nth-child(2){ width:220px; font-weight:600; }
     "goal goal goal"
     "user input tool"
     "skill skill output"
+    "exception exception log"
     "approval approval approval";
 }
 .canvas-board .note{
@@ -255,6 +256,8 @@ table.canvas td:nth-child(2){ width:220px; font-weight:600; }
 .canvas-board .a-tool{ grid-area:tool; }
 .canvas-board .a-skill{ grid-area:skill; }
 .canvas-board .a-output{ grid-area:output; border-top-color:var(--good); }
+.canvas-board .a-exception{ grid-area:exception; border-top-color:var(--warn); background:linear-gradient(135deg,#fff9ec,#fff); }
+.canvas-board .a-log{ grid-area:log; }
 .canvas-board .a-approval{ grid-area:approval; border-top-color:var(--bad); background:linear-gradient(135deg,#fff6f5,#fff); }
 .canvas-board.empty .val{ color:#c3c7de; }
 
@@ -272,7 +275,7 @@ table.canvas td:nth-child(2){ width:220px; font-weight:600; }
 }
 .btn-generate:hover{ filter:brightness(1.08); }
 @media (max-width:920px){
-  .canvas-board{ grid-template-columns:1fr; grid-template-areas:"goal" "user" "input" "tool" "skill" "output" "approval"; }
+  .canvas-board{ grid-template-columns:1fr; grid-template-areas:"goal" "user" "input" "tool" "skill" "output" "exception" "log" "approval"; }
   .canvas-form{ grid-template-columns:1fr; }
 }
 
@@ -712,6 +715,14 @@ footer.pagefoot{ max-width:760px; padding:50px 0 10px; color:var(--muted); font-
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>หลีกเลี่ยงตัวเลขหรือเอกสารภายในที่ยังไม่ได้รับอนุญาต</li>
         </ul>
 
+        <h3>เริ่มจากระดับ “คลาน → เดิน → วิ่ง” (Crawl / Walk / Run)</h3>
+        <p>ยิ่งงานเสี่ยงสูง ยิ่งต้องเริ่มที่ “คลาน” — ให้ AI ช่วยเตรียม แล้วคนตรวจทุกชิ้น เมื่อพิสูจน์ความแม่นยำแล้วค่อยขยับระดับขึ้น ไม่มีงานไหนต้องเริ่มที่ “วิ่ง” ตั้งแต่วันแรก</p>
+        <div class="grid3">
+          <div class="card"><h4>🐢 คลาน (Crawl)</h4><p style="margin:0;">AI ช่วยร่าง/สรุปเท่านั้น คนตรวจทุกชิ้นก่อนใช้</p></div>
+          <div class="card"><h4>🚶 เดิน (Walk)</h4><p style="margin:0;">AI ทำเองเป็นส่วนใหญ่ คนตรวจเฉพาะจุดสำคัญ</p></div>
+          <div class="card"><h4>🏃 วิ่ง (Run)</h4><p style="margin:0;">AI ทำอัตโนมัติ คนสุ่มตรวจและดูรายงานย้อนหลัง</p></div>
+        </div>
+
         <div class="grid2">
           <div class="card good">
             <h4>ตัวอย่างที่ปลอดภัย</h4>
@@ -771,8 +782,8 @@ footer.pagefoot{ max-width:760px; padding:50px 0 10px; color:var(--muted); font-
 
       <!-- 10 -->
       <section id="canvas">
-        <h2><span class="sec-num">10</span>Agent Canvas ฉบับเต็ม 7 ช่อง</h2>
-        <p>ในคลาสสดเราย่อเหลือ 4 ช่องภาษาคนเพื่อลดความรู้สึก "ตอบไม่ได้" — นี่คือฉบับเต็ม 7 ช่อง สำหรับคนที่พร้อมออกแบบละเอียดขึ้น</p>
+        <h2><span class="sec-num">10</span>Agent Canvas ฉบับเต็ม 9 ช่อง</h2>
+        <p>ในคลาสสดเราย่อเหลือ 4 ช่องภาษาคนเพื่อลดความรู้สึก "ตอบไม่ได้" — นี่คือฉบับเต็ม 9 ช่อง สำหรับคนที่พร้อมออกแบบละเอียดขึ้น อิงกรอบ <b>MIT — Applied Agentic AI for Organizational Transformation (Pilot Workflow Canvas)</b> โดยเพิ่มช่อง Exception และ Log/หลักฐาน ซึ่งจำเป็นมากสำหรับสถาบันการเงิน</p>
 
         <table class="canvas">
           <tr><th>#</th><th>ช่อง</th><th>คำถาม</th></tr>
@@ -783,6 +794,8 @@ footer.pagefoot{ max-width:760px; padding:50px 0 10px; color:var(--muted); font-
           <tr><td>5</td><td>Skill</td><td>Agent ต้องมี Skill อะไร?</td></tr>
           <tr><td>6</td><td>Output</td><td>Output ที่ต้องการคืออะไร?</td></tr>
           <tr><td>7</td><td>Approval</td><td>จุดไหนต้องให้คนอนุมัติ?</td></tr>
+          <tr><td>8</td><td>Exception</td><td>ถ้าข้อมูลไม่ครบ ระบบล่ม หรือเจอเคสแปลก Agent ทำอะไร แจ้งใคร?</td></tr>
+          <tr><td>9</td><td>Log / หลักฐาน</td><td>ต้องบันทึกอะไรไว้ให้ย้อนดูได้? (Log every action)</td></tr>
         </table>
 
         <h3>ตัวอย่าง Canvas ที่กรอกครบ — Daily Sales Insight Agent</h3>
@@ -793,6 +806,8 @@ footer.pagefoot{ max-width:760px; padding:50px 0 10px; color:var(--muted); font-
           <div class="note a-tool"><div class="lbl">ระบบ (Tool)</div><div class="val">Sales database, Branch master, Target, Historical sales</div></div>
           <div class="note a-skill"><div class="lbl">Skill</div><div class="val">Trend analysis, Anomaly detection, อธิบาย root cause, เขียน executive summary</div></div>
           <div class="note a-output"><div class="lbl">Output</div><div class="val">รายงาน 1 หน้า: สาขาผิดปกติ + สาเหตุที่เป็นไปได้ + recommendation</div></div>
+          <div class="note a-exception"><div class="lbl">Exception</div><div class="val">ถ้าข้อมูลไม่ครบ → หยุด + แจ้ง Analyst ทาง Teams และห้ามเดาตัวเลข</div></div>
+          <div class="note a-log"><div class="lbl">Log / หลักฐาน</div><div class="val">บันทึกแหล่งข้อมูล เวลา สาขาที่ผิดปกติ และใครเป็นคนอนุมัติ</div></div>
           <div class="note a-approval"><div class="lbl">Approval</div><div class="val">Analyst ตรวจก่อนส่งผู้บริหาร</div></div>
         </div>
 
@@ -807,6 +822,8 @@ footer.pagefoot{ max-width:760px; padding:50px 0 10px; color:var(--muted); font-
             <label>Skill<textarea id="cf-skill" placeholder="Agent ต้องมี Skill อะไร?"></textarea></label>
             <label>Output<textarea id="cf-output" placeholder="Output ที่ต้องการคืออะไร?"></textarea></label>
             <label>Approval<textarea id="cf-approval" placeholder="จุดไหนต้องให้คนอนุมัติ?"></textarea></label>
+            <label>Exception<textarea id="cf-exception" placeholder="ถ้าข้อมูลไม่ครบ/เจอเคสแปลก Agent ทำอะไร แจ้งใคร?"></textarea></label>
+            <label>Log / หลักฐาน<textarea id="cf-log" placeholder="ต้องบันทึกอะไรให้ย้อนดูได้?"></textarea></label>
           </div>
           <button class="btn-generate" id="genCanvas">สร้าง Canvas ของฉัน ↓</button>
         </div>
@@ -818,6 +835,8 @@ footer.pagefoot{ max-width:760px; padding:50px 0 10px; color:var(--muted); font-
           <div class="note a-tool"><div class="lbl">ระบบ (Tool)</div><div class="val">—</div></div>
           <div class="note a-skill"><div class="lbl">Skill</div><div class="val">—</div></div>
           <div class="note a-output"><div class="lbl">Output</div><div class="val">—</div></div>
+          <div class="note a-exception"><div class="lbl">Exception</div><div class="val">—</div></div>
+          <div class="note a-log"><div class="lbl">Log / หลักฐาน</div><div class="val">—</div></div>
           <div class="note a-approval"><div class="lbl">Approval</div><div class="val">—</div></div>
         </div>
       </section>
@@ -907,7 +926,7 @@ const genBtn = document.getElementById('genCanvas');
 if(genBtn){
   genBtn.addEventListener('click', ()=>{
     const board = document.getElementById('myCanvasBoard');
-    const fields = ['goal','user','input','tool','skill','output','approval'];
+    const fields = ['goal','user','input','tool','skill','output','exception','log','approval'];
     let hasValue = false;
     fields.forEach(f=>{
       const input = document.getElementById('cf-'+f);

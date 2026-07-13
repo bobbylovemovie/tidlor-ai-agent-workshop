@@ -5,7 +5,8 @@
 - Single-page app: one `index.html` with a tab-style nav that swaps between three views (no page reloads).
 - Runs entirely in the browser using ES modules and Supabase client-side access.
 - No Node build step, no package manager files, no backend code in this repo.
-- Not a git repo (no version history) — this AGENTS.md is the source of truth for project state and past decisions.
+- Git repo (remote `github.com:bobbylovemovie/tidlor-ai-agent-workshop`, branch `main`); AGENTS.md remains the source of truth for project state and past decisions.
+- `ai-agent-handout.html` — standalone full training handout (Thai), linked from the top nav ("📄 Handout", opens in a new tab). Self-contained (own CSS); not part of the SPA. Contains the 9-cell Agent Canvas + generator.
 
 ## Key files
 - `index.html` — all three views (Agent Spark, Blueprint Lab, Admin Dashboard) plus their `<template>` markup and the top nav.
@@ -34,8 +35,9 @@
 - Blueprint Lab's Workflow Map requires a **minimum of 1 step, not 3**. This is deliberate, not a bug to "fix": the workshop's own philosophy is that a good agent is narrow/focused, so forcing a minimum step count penalizes legitimately simple agents. The `skill` scoring dimension is ratio-based (completeness ÷ step count), not `count × weight`, for the same reason — don't revert it to reward more steps.
 
 ## Data flow
-- Spark flow submits `submission_type: 'spark'` with fields like `job_to_be_done`, `data_needed`, `output_definition`, `human_gate`, `hero_interest`, and `readiness_signals`.
-- Lab flow submits `submission_type: 'lab'` with richer blueprint state, computed `blueprint_score`, and `score_breakdown`. `workflow_steps` is a Workflow Map: each step is `{action, data, no_data, tool, no_tool, output, owner}`, not a plain string — `data_needed`/`tools_needed` are derived from it at submit time, not entered directly. `definition_of_done` and `next_recipient` are separate required columns.
+- Spark flow submits `submission_type: 'spark'` with fields like `job_to_be_done`, `frequency` (MIT trigger-lite), `data_needed`, `output_definition`, `human_gate`, `hero_interest`, and `readiness_signals` (includes `has_trigger`).
+- Lab flow submits `submission_type: 'lab'` with richer blueprint state, computed `blueprint_score`, and `score_breakdown` (now includes `evr:{effort,value,risk}`). `workflow_steps` is a Workflow Map: each step is `{action, data, no_data, tool, no_tool, actor, output, owner}` (`actor` = `agent`/`agent_review`/`human`, MIT "Where the AI fits") — not a plain string; `data_needed`/`tools_needed` are derived from it at submit time. `definition_of_done` and `next_recipient` are separate required columns.
+- **MIT Pilot Workflow Canvas alignment (2026-07):** Lab now covers all 9 MIT cells. Three new top-level columns were added (`add column if not exists` in `supabase.sql`): `trigger_event` (#1 Trigger), `audit_evidence` (#7 Evidence & Audit Log), `maturity_phase` (#9 Crawl/Walk/Run, check-constrained to `crawl`/`walk`/`run`). `location_type` (สาขา/สำนักงานใหญ่) is intentionally NOT a column — it's folded into `department` at submit (`"สาขา"` or `"สำนักงานใหญ่ · <ฝ่าย>"`) and must be deleted from the Lab payload before insert. Maturity is employee-self-selected with a soft `confirm()` warning when `risk_level==='high'` and phase≠crawl. The Lab result page renders a "ครบตามกรอบ MIT 9 ช่อง" checklist strip (`.mit-check`, pure rendering, no new data).
 - Admin dashboard reads all submissions with `select('*')` (not an explicit column list) so new fields always show up automatically. It supports search/type filtering, an expandable "ดูรายละเอียด" detail view per submission (native `<details>`), per-card JSON download, and multi-select (checkbox + "select all shown") bulk JSON download — selection persists across filter/search changes since it's tracked by row id, not DOM position.
 
 ## Known gotchas (hit these already this session — don't re-debug from scratch)

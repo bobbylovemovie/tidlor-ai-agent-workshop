@@ -18,6 +18,10 @@ create index if not exists agent_bp_employee_idx on public.agent_blueprints(empl
 -- เผื่อ project เก่าที่รันตารางนี้ไปแล้วก่อนมี Workflow Map (definition_of_done / next_recipient):
 alter table public.agent_blueprints add column if not exists definition_of_done text;
 alter table public.agent_blueprints add column if not exists next_recipient text;
+-- MIT Pilot Workflow Canvas alignment: Trigger (#1), Evidence & Audit Log (#7), Target Maturity Phase (#9)
+alter table public.agent_blueprints add column if not exists trigger_event text;
+alter table public.agent_blueprints add column if not exists audit_evidence text;
+alter table public.agent_blueprints add column if not exists maturity_phase text check(maturity_phase in('crawl','walk','run'));
 
 create table if not exists public.app_settings(key text primary key, value boolean not null default false);
 alter table public.app_settings enable row level security;
