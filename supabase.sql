@@ -30,3 +30,28 @@ create policy "admins can update settings" on public.app_settings for update to 
 create policy "admins can insert settings" on public.app_settings for insert to authenticated with check(exists(select 1 from public.workshop_admins a where a.user_id=auth.uid()));
 insert into public.app_settings(key,value) values('lab_enabled',false) on conflict(key) do nothing;
 -- ปิด/เปิด Blueprint Lab ได้จากหน้า Admin โดยตรง หรือรันคำสั่งนี้ก็ได้: update public.app_settings set value=true where key='lab_enabled';
+
+-- ===== Live counter (จอสาธารณะ) + Realtime (หน้า Admin) =====
+-- นับจำนวนไอเดียแบบสาธารณะโดยไม่เปิดเผยเนื้อหา (security definer ข้าม RLS แต่คืนแค่ตัวเลข)
+create or replace function public.submission_count()
+returns integer language sql security definer set search_path=public stable as $$
+  select count(*)::int from public.agent_blueprints;
+$$;
+grant execute on function public.submission_count() to anon, authenticated;
+-- จอ Live: คืนจำนวน + ชื่อเล่นล่าสุด "ตั้งแต่เวลา since" (ใช้ทำปุ่ม Reset ฝั่งจอ) โดยเปิดเผยแค่ชื่อเล่น ไม่มีข้อมูลอื่น
+create or replace function public.live_stats(since timestamptz default '1970-01-01')
+returns table(cnt int, names text[]) language sql security definer set search_path=public stable as $$
+  select
+    (select count(*)::int from public.agent_blueprints b where b.created_at > since) as cnt,
+    coalesce((select array_agg(nm order by ca desc) from (
+        select coalesce(nullif(btrim(display_name),''),'ผู้ร่วมสนุก') as nm, created_at as ca
+        from public.agent_blueprints
+        where created_at > since
+        order by created_at desc limit 20
+    ) t), '{}') as names;
+$$;
+grant execute on function public.live_stats(timestamptz) to anon, authenticated;
+-- เปิด Realtime ให้ตาราง (หน้า Admin ที่ล็อกอินแล้วจะได้รับ event insert; ผู้เข้าร่วม anon อ่าน row ไม่ได้ตาม RLS อยู่ดี)
+do $$ begin
+  alter publication supabase_realtime add table public.agent_blueprints;
+exception when duplicate_object then null; end $$;
