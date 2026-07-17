@@ -43,13 +43,15 @@ refreshLabFlag();
 // ==========================================
 // LIVE PUBLIC SCREEN (จอสาธารณะ นับสด)
 // ==========================================
-let liveTimer=null,liveLast=null,liveSince=localStorage.getItem('live_since')||'1970-01-01T00:00:00Z';
+let liveTimer=null,liveClockT=null,liveStart=0,liveLast=null,liveSince=localStorage.getItem('live_since')||'1970-01-01T00:00:00Z';
+function fmtClock(ms){const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),ss=s%60,p=n=>String(n).padStart(2,'0');return h?`${p(h)}:${p(m)}:${p(ss)}`:`${p(m)}:${p(ss)}`}
+function tickClock(){const el=document.getElementById('liveTimer');if(el)el.textContent=fmtClock(Date.now()-liveStart)}
 async function getLiveStats(){if(!configured)return null;try{const{data,error}=await sb.rpc('live_stats',{since:liveSince});if(error)return null;return Array.isArray(data)?data[0]:data}catch(e){return null}}
 function renderLiveNames(names){const box=document.getElementById('liveNames');if(box)box.innerHTML=(names||[]).map(nm=>`<span class="live-chip">${esc(nm)}</span>`).join('')}
 async function liveTick(){const el=document.getElementById('liveCount');if(!el)return;const s=await getLiveStats();if(!s)return;const n=s.cnt||0,names=s.names||[];if(liveLast!=null&&n>liveLast){confettiBurst();names.slice(0,n-liveLast).forEach(nm=>showToast(`🎉 ${nm} เข้าร่วมแล้ว!`))}liveLast=n;el.textContent=n.toLocaleString('th-TH');renderLiveNames(names)}
-function liveReset(){liveSince=new Date().toISOString();localStorage.setItem('live_since',liveSince);liveLast=null;const el=document.getElementById('liveCount');if(el)el.textContent='0';renderLiveNames([]);liveTick()}
-function startLive(){stopLive();liveLast=null;liveTick();liveTimer=setInterval(liveTick,4000)}
-function stopLive(){if(liveTimer){clearInterval(liveTimer);liveTimer=null}}
+function liveReset(){liveSince=new Date().toISOString();localStorage.setItem('live_since',liveSince);liveLast=null;const el=document.getElementById('liveCount');if(el)el.textContent='0';renderLiveNames([]);liveStart=Date.now();tickClock();liveTick()}
+function startLive(){stopLive();liveLast=null;liveStart=Date.now();tickClock();liveClockT=setInterval(tickClock,1000);liveTick();liveTimer=setInterval(liveTick,4000)}
+function stopLive(){if(liveTimer){clearInterval(liveTimer);liveTimer=null}if(liveClockT){clearInterval(liveClockT);liveClockT=null}}
 const _liveResetBtn=document.getElementById('liveReset');if(_liveResetBtn)_liveResetBtn.onclick=liveReset;
 const _liveFsBtn=document.getElementById('liveFs');if(_liveFsBtn)_liveFsBtn.onclick=()=>{const v=document.getElementById('view-live');if(document.fullscreenElement)document.exitFullscreen&&document.exitFullscreen();else v.requestFullscreen&&v.requestFullscreen()};
 
